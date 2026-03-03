@@ -5,45 +5,45 @@ import Image from 'next/image';
 import { Story } from '@/data/stories';
 
 interface StoryCarouselProps {
-    stories: Story[];
+  stories: Story[];
 }
 
 export default function StoryCarousel({ stories }: StoryCarouselProps) {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [isTransitioning, setIsTransitioning] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-    const story = stories[activeIndex];
-    const total = stories.length;
+  const story = stories[activeIndex];
+  const total = stories.length;
 
-    const goTo = useCallback((index: number) => {
-        if (isTransitioning) return;
-        setIsTransitioning(true);
-        setTimeout(() => {
-            setActiveIndex(index);
-            setIsTransitioning(false);
-        }, 400);
-    }, [isTransitioning]);
+  const goTo = useCallback((index: number) => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveIndex(index);
+      setIsTransitioning(false);
+    }, 400);
+  }, [isTransitioning]);
 
-    const prev = useCallback(() => goTo((activeIndex - 1 + total) % total), [activeIndex, total, goTo]);
-    const next = useCallback(() => goTo((activeIndex + 1) % total), [activeIndex, total, goTo]);
+  const prev = useCallback(() => goTo((activeIndex - 1 + total) % total), [activeIndex, total, goTo]);
+  const next = useCallback(() => goTo((activeIndex + 1) % total), [activeIndex, total, goTo]);
 
-    useEffect(() => {
-        const handler = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowLeft') prev();
-            if (e.key === 'ArrowRight') next();
-        };
-        window.addEventListener('keydown', handler);
-        return () => window.removeEventListener('keydown', handler);
-    }, [prev, next]);
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [prev, next]);
 
-    const counterLabel = `${String(activeIndex + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
-    const accentColor = story.accentColor;
-    const seriesName = story.id === 'NMC-002' ? 'GRIND FIGHTER' : story.id === 'NMC-001' ? 'STAR WYRMS' : story.title;
-    const wikiTag = story.id === 'NMC-002' ? 'grind-fighter' : 'star-wyrms';
+  const counterLabel = `${String(activeIndex + 1).padStart(2, '0')}:${String(total).padStart(2, '0')}`;
+  const accentColor = story.accentColor;
+  const seriesName = story.id === 'NMC-002' ? 'GRIND FIGHTER' : story.id === 'NMC-001' ? 'STAR WYRMS' : story.title;
+  const wikiTag = story.id === 'NMC-002' ? 'grind-fighter' : 'star-wyrms';
 
-    return (
-        <>
-            <style>{`
+  return (
+    <>
+      <style>{`
         /* ── Carousel Panel ─────────────────────────────────── */
         .sc-panel {
           display: flex;
@@ -352,122 +352,122 @@ export default function StoryCarousel({ stories }: StoryCarouselProps) {
         }
       `}</style>
 
-            <div
-                className="sc-panel"
-                style={{
-                    ['--sc-accent' as string]: accentColor,
-                    ['--sc-accent-dim' as string]: `${accentColor}18`,
-                }}
-            >
-                {/* ── Header Row ──────────────────────────────────── */}
-                <div className="sc-header">
-                    <span className="sc-title-label">THE STORIES &gt;&gt;</span>
-                    <div className="sc-counter-wrap">
-                        <span className="sc-counter">{counterLabel}</span>
-                        <button className="sc-arrow-btn" onClick={prev} aria-label="Previous story">←</button>
-                        <button className="sc-arrow-btn" onClick={next} aria-label="Next story">→</button>
-                    </div>
-                </div>
+      <div
+        className="sc-panel"
+        style={{
+          ['--sc-accent' as string]: accentColor,
+          ['--sc-accent-dim' as string]: `${accentColor}18`,
+        }}
+      >
+        {/* ── Header Row ──────────────────────────────────── */}
+        <div className="sc-header">
+          <span className="sc-title-label">THE STORIES &gt;&gt;</span>
+          <div className="sc-counter-wrap">
+            <span className="sc-counter">{counterLabel}</span>
+            <button className="sc-arrow-btn" onClick={prev} aria-label="Previous story">←</button>
+            <button className="sc-arrow-btn" onClick={next} aria-label="Next story">→</button>
+          </div>
+        </div>
 
-                {/* ── Cover Art ─────────────────────────────────────── */}
-                <div className="sc-cover-wrap">
-                    <div className="sc-cover-fade">
-                        {story.coverArt ? (
-                            <Image
-                                src={story.coverArt}
-                                alt={story.title}
-                                fill
-                                style={{ objectFit: 'cover' }}
-                                priority
-                            />
-                        ) : (
-                            <div className="sc-cover-placeholder">
-                                <div className="sc-placeholder-glow" />
-                                <p className="sc-placeholder-title">{story.title}</p>
-                            </div>
-                        )}
-                        <div className="sc-cover-gradient" />
-                        <div className="sc-tags">
-                            {story.tags.map(tag => (
-                                <span key={tag} className="sc-tag">{tag}</span>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* ── Info Row ──────────────────────────────────────── */}
-                <div className="sc-info-row">
-                    <div className="sc-info-text">
-                        <h2 className="sc-story-title">{story.title}</h2>
-                        <p className="sc-story-subtitle">{story.subtitle}</p>
-                    </div>
-                    <a
-                        href={story.royalRoadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="sc-read-btn"
-                    >
-                        READ →
-                    </a>
-                </div>
-
-                {/* ── Bottom Split Row ──────────────────────────────── */}
-                <div className="sc-bottom-row">
-                    {/* YouTube Column */}
-                    <div className="sc-yt-col">
-                        <p className="sc-yt-label">{story.youtubeLabel}</p>
-                        {story.youtubeId ? (
-                            <div className="sc-yt-frame-wrap">
-                                <iframe
-                                    src={`https://www.youtube.com/embed/${story.youtubeId}`}
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                    title={`${story.title} — ${story.youtubeLabel}`}
-                                />
-                            </div>
-                        ) : (
-                            <div className="sc-yt-placeholder">
-                                <span className="sc-yt-placeholder-icon">▶</span>
-                                <span className="sc-yt-placeholder-text">VIDEO COMING SOON</span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Divider */}
-                    <div className="sc-bottom-divider" />
-
-                    {/* Info Card Column */}
-                    <div className="sc-card-col">
-                        <div className="sc-info-card">
-                            <span className="sc-info-card-id">// {story.id}</span>
-                            <span className="sc-info-card-series">{seriesName}</span>
-                            <a
-                                href={`/wiki?series=${wikiTag}`}
-                                className="sc-info-card-link"
-                            >
-                                ENTER ARCHIVE →
-                            </a>
-                            {story.id === 'NMC-002' && (
-                                <a href="/grind-fighter/arena" className="sc-info-card-link">
-                                    ARENA →
-                                </a>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* ── Transition Dots ───────────────────────────────── */}
-                <div className="sc-dots">
-                    {stories.map((_, i) => (
-                        <div
-                            key={i}
-                            className={`sc-dot${i === activeIndex ? ' active' : ''}`}
-                            onClick={() => goTo(i)}
-                            style={{ cursor: 'pointer' }}
-                        />
-                    ))}
-                </div>
+        {/* ── Cover Art ─────────────────────────────────────── */}
+        <div className="sc-cover-wrap">
+          <div className="sc-cover-fade">
+            {story.coverArt ? (
+              <Image
+                src={story.coverArt}
+                alt={story.title}
+                fill
+                style={{ objectFit: 'cover' }}
+                priority
+              />
+            ) : (
+              <div className="sc-cover-placeholder">
+                <div className="sc-placeholder-glow" />
+                <p className="sc-placeholder-title">{story.title}</p>
+              </div>
+            )}
+            <div className="sc-cover-gradient" />
+            <div className="sc-tags">
+              {story.tags.map(tag => (
+                <span key={tag} className="sc-tag">{tag}</span>
+              ))}
             </div>
-        </>
-    );
+          </div>
+        </div>
+
+        {/* ── Info Row ──────────────────────────────────────── */}
+        <div className="sc-info-row">
+          <div className="sc-info-text">
+            <h2 className="sc-story-title">{story.title}</h2>
+            <p className="sc-story-subtitle">{story.subtitle}</p>
+          </div>
+          <a
+            href={story.royalRoadUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sc-read-btn"
+          >
+            READ →
+          </a>
+        </div>
+
+        {/* ── Bottom Split Row ──────────────────────────────── */}
+        <div className="sc-bottom-row">
+          {/* YouTube Column */}
+          <div className="sc-yt-col">
+            <p className="sc-yt-label">{story.youtubeLabel}</p>
+            {story.youtubeId ? (
+              <div className="sc-yt-frame-wrap">
+                <iframe
+                  src={`https://www.youtube.com/embed/${story.youtubeId}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={`${story.title} — ${story.youtubeLabel}`}
+                />
+              </div>
+            ) : (
+              <div className="sc-yt-placeholder">
+                <span className="sc-yt-placeholder-icon">▶</span>
+                <span className="sc-yt-placeholder-text">VIDEO COMING SOON</span>
+              </div>
+            )}
+          </div>
+
+          {/* Divider */}
+          <div className="sc-bottom-divider" />
+
+          {/* Info Card Column */}
+          <div className="sc-card-col">
+            <div className="sc-info-card">
+              <span className="sc-info-card-id">// {story.id}</span>
+              <span className="sc-info-card-series">{seriesName}</span>
+              <a
+                href={`/wiki?series=${wikiTag}`}
+                className="sc-info-card-link"
+              >
+                ENTER ARCHIVE →
+              </a>
+              {story.id === 'NMC-002' && (
+                <a href="/grind-fighter/arena" className="sc-info-card-link">
+                  ARENA →
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Transition Dots ───────────────────────────────── */}
+        <div className="sc-dots">
+          {stories.map((_, i) => (
+            <div
+              key={i}
+              className={`sc-dot${i === activeIndex ? ' active' : ''}`}
+              onClick={() => goTo(i)}
+              style={{ cursor: 'pointer' }}
+            />
+          ))}
+        </div>
+      </div>
+    </>
+  );
 }

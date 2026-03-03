@@ -24,6 +24,14 @@ export default function LandingPage() {
           position: relative;
           z-index: 5;
         }
+        /* Left panel teal-navy tint */
+        .hud-layout > :first-child {
+          background: rgba(20, 35, 55, 0.6);
+        }
+        /* Right panel slightly different tint */
+        .hud-layout > :last-child {
+          background: rgba(15, 25, 40, 0.45);
+        }
 
         /* ── Panel Divider ───────────────────────────────────── */
         .hud-divider {
