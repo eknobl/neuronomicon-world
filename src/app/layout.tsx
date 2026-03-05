@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Orbitron, Share_Tech_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Orbitron, Share_Tech_Mono, Kode_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import NavBar from "@/components/NavBar";
@@ -27,6 +27,12 @@ const shareTechMono = Share_Tech_Mono({
   weight: "400",
 });
 
+const kodeMono = Kode_Mono({
+  variable: "--font-kode-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 export const metadata: Metadata = {
   title: "THE NEURONOMICON",
   description: "A one-person cinematic universe — stories, lore, and interactive tools set in a far-future humanity building artificial gods to conquer the stars.",
@@ -40,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${shareTechMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${shareTechMono.variable} ${kodeMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
