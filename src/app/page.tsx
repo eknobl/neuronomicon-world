@@ -118,7 +118,7 @@ export default function LandingPage() {
         }
         .deco {
           font-family: var(--mono);
-          font-size: clamp(32px, 3.5vw, 50px);
+          font-size: 50px;
           color: var(--white); line-height: 1;
         }
         .deco-plus   { margin-right: 80px; }
@@ -128,9 +128,9 @@ export default function LandingPage() {
           top: 520px; left: 44px;
           font-family: var(--mono);
           font-weight: 700;
-          font-size: clamp(44px, 6.5vw, 94px);
+          font-size: 94px;
           color: var(--white);
-          letter-spacing: -0.05em;
+          letter-spacing: -4.7px;
           line-height: 1;
           z-index: 5;
         }
@@ -145,8 +145,9 @@ export default function LandingPage() {
         .hero-tagline {
           position: absolute;
           top: 658px; left: 48px;
+          font-family: 'Roboto', sans-serif;
           font-weight: 500;
-          font-size: clamp(13px, 1.4vw, 20px);
+          font-size: 20px;
           color: var(--white);
           line-height: 1.55;
           max-width: 793px;
@@ -227,11 +228,13 @@ export default function LandingPage() {
         .hub-tile-title {
           font-family: var(--mono);
           font-weight: 700;
-          font-size: clamp(18px, 2vw, 30px);
+          font-size: 30px;
           color: var(--white);
           text-transform: uppercase;
         }
         .hub-tile-sub {
+          font-family: 'Roboto', sans-serif;
+          font-weight: 400;
           font-size: 12px;
           color: var(--white);
           text-transform: uppercase;
@@ -242,9 +245,8 @@ export default function LandingPage() {
         .stories-images {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          height: 361px;
         }
-        .story-img-panel { overflow: hidden; }
+        .story-img-panel { overflow: hidden; aspect-ratio: 4/5; }
         .story-img-panel img {
           width: 100%; height: 100%;
           object-fit: cover;
@@ -275,7 +277,7 @@ export default function LandingPage() {
         .story-title {
           font-family: var(--mono);
           font-weight: 700;
-          font-size: clamp(16px, 2vw, 30px);
+          font-size: 30px;
           color: var(--white);
           text-transform: uppercase;
           margin-bottom: 16px;
@@ -284,6 +286,7 @@ export default function LandingPage() {
           display: flex;
           align-items: stretch;
           width: 158px; height: 41px;
+          margin-left: auto;
         }
         .btn-stripe { display: block; width: 10px; flex-shrink: 0; }
         .btn-stripe.blue  { background: var(--steel); }
@@ -329,8 +332,9 @@ export default function LandingPage() {
           margin-bottom: 28px;
         }
         .quote-text {
-          font-weight: 900;
-          font-size: clamp(30px, 5.1vw, 74px);
+          font-family: var(--mono);
+          font-weight: 700;
+          font-size: 74px;
           line-height: 0.9;
           color: var(--white);
           text-transform: uppercase;
@@ -439,29 +443,39 @@ export default function LandingPage() {
 
         /* ── FOOTER ── */
         .site-footer {
-          height: 46px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          background: var(--bg);
+        }
+        .footer-left {
           background: var(--white);
           display: flex;
           align-items: center;
-          position: relative;
+          height: 46px;
+          padding-left: 44px;
         }
         .footer-name {
           font-family: var(--mono);
           font-weight: 700;
           font-size: clamp(14px, 1.8vw, 26px);
           color: var(--steel);
-          padding-left: 44px;
         }
+        /* Diagonal red/black stripe panels — Website06 style */
         .footer-stripes {
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
-          height: 100%;
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          height: 46px;
+          overflow: hidden;
         }
-        .fs { display: block; width: 10px; height: 100%; }
-        .fs.black { background: var(--bg); }
-        .fs.blue  { background: var(--steel); }
+        .footer-stripe-panel {
+          background: repeating-linear-gradient(
+            -45deg,
+            #ff0000 0px,
+            #ff0000 18px,
+            #000000 18px,
+            #000000 36px
+          );
+        }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
@@ -582,8 +596,8 @@ export default function LandingPage() {
             { src: '/images/website03.png', alt: 'Grind Fighter' },
             { src: '/images/website04.png', alt: 'The AI God' },
             { src: '/images/website05.png', alt: 'Crusade' },
-          ].map(({ src, alt }) => (
-            <div key={src} className="story-img-panel">
+          ].map(({ src, alt }, i) => (
+            <div key={i} className="story-img-panel">
               <Image src={src} alt={alt} width={500} height={361} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           ))}
@@ -666,11 +680,12 @@ export default function LandingPage() {
 
         {/* FOOTER */}
         <footer className="site-footer">
-          <span className="footer-name">NEURONOMICON</span>
+          <div className="footer-left">
+            <span className="footer-name">NEURONOMICON</span>
+          </div>
           <div className="footer-stripes" aria-hidden="true">
-            {['black', 'blue', 'black', 'blue', 'black', 'blue', 'black'].map((c, i) => (
-              <span key={i} className={`fs ${c}`} />
-            ))}
+            <div className="footer-stripe-panel" />
+            <div className="footer-stripe-panel" />
           </div>
         </footer>
 
