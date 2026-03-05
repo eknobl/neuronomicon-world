@@ -7,6 +7,7 @@ const NAV_LINKS = [
     { label: 'NEURONOMICON', href: '/' },
     { label: 'ARCHIVE', href: '/wiki' },
     { label: 'ARENA', href: '/grind-fighter/arena' },
+    { label: 'ILION RING', href: '/ilion-ring.html' },
 ];
 
 export default function NavBar() {

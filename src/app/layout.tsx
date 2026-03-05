@@ -28,8 +28,8 @@ const shareTechMono = Share_Tech_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Grind Fighter Stories",
-  description: "Interactive Tournament Chronicles powered by Claude",
+  title: "THE NEURONOMICON",
+  description: "A one-person cinematic universe — stories, lore, and interactive tools set in a far-future humanity building artificial gods to conquer the stars.",
 };
 
 export default function RootLayout({
