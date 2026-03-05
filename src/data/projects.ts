@@ -47,4 +47,13 @@ export const PROJECTS: Project[] = [
         url: '/wiki',
         status: 'ONLINE',
     },
+    {
+        id: 'NMC-005',
+        title: 'ILION RING',
+        tagline: 'Your GitHub repos mapped to a Dyson swarm under construction',
+        tags: ['INTERACTIVE', 'THREE.JS', 'TROY SYSTEM'],
+        color: '#00e5cc',
+        url: '/ilion-ring.html',
+        status: 'ONLINE',
+    },
 ];
