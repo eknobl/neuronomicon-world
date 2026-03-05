@@ -8,6 +8,7 @@ const NAV_LINKS = [
     { label: 'ARCHIVE', href: '/wiki' },
     { label: 'ARENA', href: '/grind-fighter/arena' },
     { label: 'ILION RING', href: '/ilion-ring.html' },
+    { label: 'STAR MAP', href: '/star-map/' },
 ];
 
 export default function NavBar() {

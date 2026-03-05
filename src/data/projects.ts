@@ -56,4 +56,13 @@ export const PROJECTS: Project[] = [
         url: '/ilion-ring.html',
         status: 'ONLINE',
     },
+    {
+        id: 'NMC-006',
+        title: 'STAR MAP',
+        tagline: '3D interactive map of the nearest stars to Earth',
+        tags: ['INTERACTIVE', 'THREE.JS', 'NAVIGATION'],
+        color: '#7c9fd4',
+        url: '/star-map/',
+        status: 'ONLINE',
+    },
 ];
