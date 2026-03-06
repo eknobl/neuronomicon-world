@@ -38,9 +38,9 @@ export default function LandingPage() {
           position: absolute;
           top: 12px; left: 50%;
           transform: translateX(-50%);
-          color: var(--bg);
-          font-family: var(--mono);
-          font-size: 16px; line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .sidebar-stripes {
           position: absolute;
@@ -99,16 +99,9 @@ export default function LandingPage() {
         .bracket-tl {
           position: absolute;
           top: 70px; left: 21px;
-          width: 34px; height: 34px;
+          width: 35px; height: 35px;
           z-index: 5;
         }
-        .bracket-tl::before, .bracket-tl::after {
-          content: '';
-          position: absolute;
-          background: var(--white);
-        }
-        .bracket-tl::before { top: 0; left: 0; width: 34px; height: 3px; }
-        .bracket-tl::after  { top: 0; left: 0; width: 3px; height: 34px; }
         .hero-decos {
           position: absolute;
           top: 409px; left: 44px; right: 44px;
@@ -507,7 +500,11 @@ export default function LandingPage() {
 
       {/* SIDEBAR */}
       <aside className="sidebar" aria-hidden="true">
-        <div className="sidebar-star">✦</div>
+        <div className="sidebar-star">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0L13.1863 7.57259L18 1.6077L15.2411 8.75891L22.3923 6L16.4274 10.8137L24 12L16.4274 13.1863L22.3923 18L15.2411 15.2411L18 22.3923L13.1863 16.4274L12 24L10.8137 16.4274L6 22.3923L8.75891 15.2411L1.6077 18L7.57259 13.1863L0 12L7.57259 10.8137L1.6077 6L8.75891 8.75891L6 1.6077L10.8137 7.57259L12 0Z" fill="#7184A0" />
+          </svg>
+        </div>
         <div className="sidebar-stripes">
           <div className="stripe s-black" />
           <div className="stripe s-blue" />
@@ -539,7 +536,11 @@ export default function LandingPage() {
               style={{ objectFit: 'cover', objectPosition: 'center top' }}
             />
           </div>
-          <div className="bracket-tl" aria-hidden="true" />
+          <div className="bracket-tl" aria-hidden="true">
+            <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.7832 6.70215L31.1367 27.0557L26.7002 31.4932L6.26758 11.0605L6.26758 35L0.309569 35L0.30957 5.10254L-2.09507e-07 4.79297L0.30957 4.4834L0.30957 -1.49737e-06L34.5654 0L34.5654 6.70215L10.7832 6.70215Z" fill="white" />
+            </svg>
+          </div>
           <div className="hero-decos" aria-hidden="true">
             <span className="deco deco-plus">+</span>
             <span className="deco deco-arrows">{'>>'}</span>
