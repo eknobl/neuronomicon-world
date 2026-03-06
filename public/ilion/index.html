@@ -607,6 +607,7 @@
     // ─── CAMERA SYSTEM ────────────────────────────────────────────────────────────
     let mode = 'orbital';
     let droneAngle = ARC_S;
+    let droneDir = 1;    // +1 = forward toward ARC_E, -1 = reverse toward ARC_S
 
     const ORBITAL_POS = new THREE.Vector3(0, 265, 420);
     const ORBITAL_TGT = new THREE.Vector3(0, 0, 0);
@@ -622,7 +623,7 @@
       return V3(Math.cos(droneAngle) * DRONE_POS_R, 0, Math.sin(droneAngle) * DRONE_POS_R);
     }
     function goalDroneTgt() {
-      const la = droneAngle + DRONE_LOOKAHEAD;
+      const la = droneAngle + DRONE_LOOKAHEAD * droneDir;
       return V3(Math.cos(la) * DRONE_TGT_R, 0, Math.sin(la) * DRONE_TGT_R);
     }
 
@@ -777,7 +778,9 @@
       camera.fov += (getGoalFov() - camera.fov) * 0.04;
 
       if (mode === 'drone') {
-        droneAngle = Math.min(ARC_E - 0.15, droneAngle + DRONE_ADVANCE);
+        droneAngle += DRONE_ADVANCE * droneDir;
+        if (droneAngle >= ARC_E - 0.15) { droneAngle = ARC_E - 0.15; droneDir = -1; }
+        if (droneAngle <= ARC_S) { droneAngle = ARC_S; droneDir = 1; }
       }
 
       camUpDrone.set(-Math.cos(droneAngle), 0, -Math.sin(droneAngle));
