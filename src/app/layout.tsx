@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Orbitron, Share_Tech_Mono, Kode_Mono } from "next/fo
 import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import NavBar from "@/components/NavBar";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 
 const geistSans = Geist({
@@ -62,6 +63,7 @@ export default function RootLayout({
           <NavBar />
           {children}
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
