@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async redirects() {
+    return [
+      {
+        source: "/ilion",
+        destination: "https://eknobl.github.io/ilion-dyson-ring/",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
