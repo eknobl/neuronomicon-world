@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import supabaseAdmin from '@/lib/supabaseAdmin';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET(req: NextRequest) {
+    const supabaseAdmin = getSupabaseAdmin();
     const { searchParams } = new URL(req.url);
     const from = parseFloat(searchParams.get('from') ?? '-0.4');
     const to = parseFloat(searchParams.get('to') ?? '3.5');

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import supabaseAdmin from '@/lib/supabaseAdmin';
+import { getSupabaseAdmin } from '@/lib/supabaseAdmin';
 
 const ARC_S = -Math.PI * 0.10;
 const ARC_E = Math.PI * 1.085;
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'username required' }, { status: 400 });
         }
 
-        // 1. Fetch GitHub user profile
+        const supabaseAdmin = getSupabaseAdmin();
         const ghUserRes = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
             headers: { 'Accept': 'application/vnd.github+json' },
         });
