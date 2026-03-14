@@ -13,8 +13,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-nmc-bg: #000000;
+  --color-nmc-white: #ffffff;
+  --color-nmc-red: #ff0000;
+  --color-nmc-steel: #7184a0;
+
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-kode-mono), 'Courier New', monospace;
+  --font-body: 'Roboto', sans-serif;
+  --font-orbitron: var(--font-orbitron), sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -32,7 +39,13 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-nmc-bg);
+  color: var(--color-nmc-white);
+  font-family: var(--font-body);
+}
+
+/* Base interactive focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-nmc-red);
+  outline-offset: 2px;
 }
