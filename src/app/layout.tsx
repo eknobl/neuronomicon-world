@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import NavBar from "@/components/NavBar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Banner } from "@/components/ui/Banner";
 
 
 const geistSans = Geist({
@@ -60,7 +61,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NavBar />
+          <Banner />
           {children}
         </ThemeProvider>
         <SpeedInsights />
