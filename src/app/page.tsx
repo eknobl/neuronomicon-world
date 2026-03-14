@@ -1,5 +1,7 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { HubCard, AngledSection, GradientPanel } from '@/components/ui/Cards';
+import { Tricolon, Bracket, DecoSlash, DecoArrows, DecoPlus, HazardStripes, DiagonalStripes } from '@/components/ui/Decorators';
 
 export default function LandingPage() {
   return (
@@ -520,18 +522,14 @@ export default function LandingPage() {
               style={{ objectFit: 'cover', objectPosition: 'center top' }}
             />
           </div>
-          <div className="bracket-tl" aria-hidden="true">
-            <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10.7832 6.70215L31.1367 27.0557L26.7002 31.4932L6.26758 11.0605L6.26758 35L0.309569 35L0.30957 5.10254L-2.09507e-07 4.79297L0.30957 4.4834L0.30957 -1.49737e-06L34.5654 0L34.5654 6.70215L10.7832 6.70215Z" fill="white" />
-            </svg>
-          </div>
-          <div className="hero-decos" aria-hidden="true">
-            <span className="deco deco-plus">+</span>
-            <span className="deco deco-arrows">{'>>'}</span>
-            <span className="deco deco-slashes">{'///'}</span>
+          <Bracket position="tl" color="white" className="bracket-tl" />
+          <div className="hero-decos">
+            <DecoPlus className="deco deco-plus" />
+            <DecoArrows className="deco deco-arrows" />
+            <DecoSlash className="deco deco-slashes" />
           </div>
           <h1 className="hero-title">NEURONOMICON</h1>
-          <span className="hero-tricolon" aria-hidden="true">:::</span>
+          <Tricolon className="hero-tricolon" />
           <p className="hero-tagline">
             Humanity built artificial gods to conquer the stars.<br />
             They never explained why.
@@ -540,7 +538,7 @@ export default function LandingPage() {
 
         {/* UNIVERSE HUB */}
         <section className="universe-hub" aria-label="Universe">
-          <div className="hub-newsletter">
+          <GradientPanel className="hub-newsletter p-[22px_22px_28px] flex flex-col justify-between relative">
             <div>
               <p className="hub-label">NEWSLETTER</p>
               <a href="https://www.theaivideocreator.ai/" className="hub-big-link" target="_blank" rel="noopener noreferrer">
@@ -548,29 +546,13 @@ export default function LandingPage() {
               </a>
             </div>
             <p className="hub-subtitle">Behind the scenes</p>
-            <div className="bracket-br" aria-hidden="true" />
-          </div>
+            <Bracket position="br" color="white" className="bottom-[56px] right-[-44px]" />
+          </GradientPanel>
           <div className="hub-grid">
-            <Link href="/wiki" className="hub-tile">
-              <span className="tricolon" aria-hidden="true">:::</span>
-              <span className="hub-tile-title">WIKI</span>
-              <span className="hub-tile-sub">THE HISTORY. THE PLANETS. THE STARSHIPS.</span>
-            </Link>
-            <a href="/star-map/" className="hub-tile">
-              <span className="tricolon" aria-hidden="true">:::</span>
-              <span className="hub-tile-title">STAR MAP</span>
-              <span className="hub-tile-sub">3D MAP OF THE SETTING</span>
-            </a>
-            <a href="/ilion" className="hub-tile">
-              <span className="tricolon" aria-hidden="true">:::</span>
-              <span className="hub-tile-title">ILION</span>
-              <span className="hub-tile-sub">THE RING AROUND A STAR</span>
-            </a>
-            <a href="https://www.youtube.com/@NeuronomiconTV" className="hub-tile" target="_blank" rel="noopener noreferrer">
-              <span className="tricolon" aria-hidden="true">:::</span>
-              <span className="hub-tile-title">FILMS</span>
-              <span className="hub-tile-sub">YOUTUBE</span>
-            </a>
+            <HubCard href="/wiki" title="WIKI" subtitle="THE HISTORY. THE PLANETS. THE STARSHIPS." />
+            <HubCard href="/star-map/" title="STAR MAP" subtitle="3D MAP OF THE SETTING" />
+            <HubCard href="/ilion" title="ILION" subtitle="THE RING AROUND A STAR" />
+            <HubCard href="https://www.youtube.com/@NeuronomiconTV" title="FILMS" subtitle="YOUTUBE" isExternal />
           </div>
         </section>
 
@@ -594,73 +576,69 @@ export default function LandingPage() {
             <p className="story-tagline">They were built to be controlled weapons.<br />They forgot Dragons can&apos;t be tamed.</p>
             <h2 className="story-title">STAR WYRMS</h2>
             <div className="story-btn-row">
-              <span className="btn-stripe blue" />
-              <a href="https://www.royalroad.com/fiction/146773/star-wyrms-top-gun-attack-on-titan-space-dragons" className="story-btn" target="_blank" rel="noopener noreferrer">READ ON ROYAL ROAD</a>
+              <Button href="https://www.royalroad.com/fiction/146773/star-wyrms-top-gun-attack-on-titan-space-dragons" isExternal stripeColor="blue">READ ON ROYAL ROAD</Button>
             </div>
           </div>
           <div className="story-col">
             <p className="story-tagline">Become the monster and win<br />the Grind tournament. Or die.</p>
             <h2 className="story-title">GRIND FIGHTER</h2>
             <div className="story-btn-row">
-              <span className="btn-stripe black" />
-              <a href="https://www.royalroad.com/fiction/138724/grind-fighter-hunger-games-gladiator-ghost-in" className="story-btn" target="_blank" rel="noopener noreferrer">READ ON ROYAL ROAD</a>
+              <Button href="https://www.royalroad.com/fiction/138724/grind-fighter-hunger-games-gladiator-ghost-in" isExternal stripeColor="black">READ ON ROYAL ROAD</Button>
             </div>
           </div>
           <div className="story-col">
             <p className="story-tagline">Humanity built a god in the machine.<br />They thought they could control it.</p>
             <h2 className="story-title">THE AI GOD</h2>
             <div className="story-btn-row">
-              <span className="btn-stripe blue" />
-              <span className="story-btn" aria-disabled="true">COMING SOON</span>
+              <Button disabled stripeColor="blue">COMING SOON</Button>
             </div>
           </div>
           <div className="story-col">
             <p className="story-tagline">THE HOLY WAR AGAINST THE MACHINES<br />IS RAGING IN THE KNOWN GALAXY</p>
             <h2 className="story-title">CRUSADE</h2>
             <div className="story-btn-row">
-              <span className="btn-stripe black" />
-              <span className="story-btn" aria-disabled="true">COMING SOON</span>
+              <Button disabled stripeColor="black">COMING SOON</Button>
             </div>
           </div>
         </section>
 
         {/* QUOTE */}
-        <section className="quote-section">
+        <AngledSection className="quote-section">
           <p className="quote-label">TWELVE SYNTHETIC GODS</p>
           <blockquote className="quote-text">
             They gave us the heavens,<br />
             we never asked if it was right.
           </blockquote>
-          <div className="bracket-bl-red" aria-hidden="true" />
-        </section>
+          <Bracket position="bl" color="red" className="bottom-[42px] left-[90px]" />
+        </AngledSection>
 
         {/* NARRATIVE */}
         <section className="narrative-section">
-          <div className="narrative-text-block">
-            <span className="tricolon" aria-hidden="true">:::</span>
-            <p className="narrative-body">
+          <AngledSection className="p-[32px_44px] flex flex-col justify-end gap-[18px]">
+            <Tricolon />
+            <p className="narrative-body normal-case">
               In the year 2187, the first Synthetic Intelligence achieved sentience.<br /><br />
               By 2201, humanity had built eleven more.<br /><br />
               They called them gods. They called them saviours.<br /><br />
               They were wrong on both counts.
             </p>
-          </div>
-          <div className="narrative-panel">
-            <div className="arrow-br" aria-hidden="true" />
-          </div>
-          <div className="narrative-panel" />
+          </AngledSection>
+          <GradientPanel className="min-h-[179px] relative">
+             <Bracket position="br" color="red" size={30} thickness={4} className="bottom-[22px] right-[22px]" />
+          </GradientPanel>
+          <GradientPanel className="min-h-[179px]" />
         </section>
 
         {/* SOCIAL */}
         <section className="social-section">
-          <div className="social-stripes" aria-hidden="true" />
-          <div className="social-content">
+          <HazardStripes className="h-[32px] w-full" />
+          <AngledSection className="p-[22px_30px] flex flex-col justify-end gap-[12px]">
             <p className="social-heading">FOLLOW THE UNIVERSE</p>
             <div className="social-links">
               <a href="https://x.com/Erik_Knobl" className="social-link" target="_blank" rel="noopener noreferrer">@ERIK_KNOBL</a>
               <a href="https://www.youtube.com/@NeuronomiconTV" className="social-link" target="_blank" rel="noopener noreferrer">NEURONOMICON TV</a>
             </div>
-          </div>
+          </AngledSection>
         </section>
 
         {/* FOOTER */}
@@ -669,8 +647,8 @@ export default function LandingPage() {
             <span className="footer-name">NEURONOMICON</span>
           </div>
           <div className="footer-stripes" aria-hidden="true">
-            <div className="footer-stripe-panel" />
-            <div className="footer-stripe-panel" />
+            <DiagonalStripes className="h-full" />
+            <DiagonalStripes className="h-full" />
           </div>
         </footer>
 
