@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Heading, LabelMono, Paragraph } from './Typography';
 
 interface CardProps {
   title: string;
@@ -12,12 +13,12 @@ interface CardProps {
 export const HubCard = ({ title, subtitle, href, isExternal, className = '' }: CardProps) => {
   const content = (
     <>
-      <span className="font-mono text-[11px] text-nmc-steel tracking-[1px] select-none" aria-hidden="true">:::</span>
-      <span className="font-mono font-bold text-[30px] text-nmc-white uppercase mt-2 mb-1 leading-none">{title}</span>
+      <LabelMono aria-hidden="true">:::</LabelMono>
+      <Heading as="h2" className="mt-2 mb-1">{title}</Heading>
       {subtitle && (
-        <span className="font-sans font-normal text-[12px] text-nmc-white uppercase opacity-90 leading-tight">
+        <Paragraph size="sm" opacity="muted" className="font-sans uppercase">
           {subtitle}
-        </span>
+        </Paragraph>
       )}
       <img src="/arrow-br.svg" alt="" aria-hidden="true" className="absolute bottom-[24px] right-[32px] w-[30px] h-[30px] pointer-events-none rotate-180" />
     </>
