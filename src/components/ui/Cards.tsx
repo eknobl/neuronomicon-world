@@ -19,10 +19,11 @@ export const HubCard = ({ title, subtitle, href, isExternal, className = '' }: C
           {subtitle}
         </span>
       )}
+      <img src="/arrow-br.svg" alt="" aria-hidden="true" className="absolute bottom-[24px] right-[32px] w-[30px] h-[30px] pointer-events-none rotate-180" />
     </>
   );
 
-  const baseClasses = `flex flex-col gap-2 p-[18px_22px_20px] bg-gradient-to-tr from-[#000] from-[70%] to-nmc-steel to-[130%] border-l border-t border-[#111] hover:bg-gradient-to-tr hover:from-[#0a0a0a] hover:from-[50%] hover:to-nmc-steel hover:to-[115%] transition-all duration-200 cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-nmc-red ${className}`;
+  const baseClasses = `relative flex flex-col gap-2 p-[24px_32px_48px] bg-gradient-to-tr from-[#000] from-[70%] to-nmc-steel to-[130%] border-l border-t border-[#111] hover:bg-gradient-to-tr hover:from-[#0a0a0a] hover:from-[50%] hover:to-nmc-steel hover:to-[115%] transition-all duration-200 cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-nmc-red min-h-[160px] ${className}`;
 
   if (href) {
     if (isExternal) {
