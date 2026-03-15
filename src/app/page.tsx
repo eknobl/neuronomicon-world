@@ -552,7 +552,7 @@ export default function LandingPage() {
             <HubCard href="/wiki" title="WIKI" subtitle="THE HISTORY. THE PLANETS. THE STARSHIPS." />
             <HubCard href="/star-map/" title="STAR MAP" subtitle="3D MAP OF THE SETTING" />
             <HubCard href="/ilion" title="ILION" subtitle="THE RING AROUND A STAR" />
-            <HubCard href="https://www.youtube.com/@NeuronomiconTV" title="FILMS" subtitle="YOUTUBE" isExternal />
+            <HubCard href="https://magi-codex.vercel.app" title="THE 12 MAGI" subtitle="TIMELINE" isExternal />
           </div>
         </section>
 
