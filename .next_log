@@ -1,0 +1,207 @@
+
+> neuronomicon-world@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.177:3000
+- Environments: .env.local
+
+✓ Starting...
+✓ Ready in 793ms
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/register'
+}
+ POST /api/ring/register 500 in 1414ms (compile: 1333ms, render: 81ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/users'
+}
+ GET /api/ring/users?from=-0.3141592653589793&to=3.4086280291449254&limit=10000 500 in 135ms (compile: 127ms, render: 7ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/register'
+}
+ POST /api/ring/register 500 in 63ms (compile: 54ms, render: 9ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/users'
+}
+ GET /api/ring/users?from=-0.3141592653589793&to=3.4086280291449254&limit=10000 500 in 28ms (compile: 22ms, render: 6ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/register'
+}
+ POST /api/ring/register 500 in 71ms (compile: 58ms, render: 13ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/users'
+}
+ GET /api/ring/users?from=-0.3141592653589793&to=3.4086280291449254&limit=10000 500 in 31ms (compile: 24ms, render: 7ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/register'
+}
+ POST /api/ring/register 500 in 146ms (compile: 136ms, render: 10ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/users'
+}
+ GET /api/ring/users?from=-0.3141592653589793&to=3.4086280291449254&limit=10000 500 in 46ms (compile: 41ms, render: 6ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/register'
+}
+ POST /api/ring/register 500 in 106ms (compile: 95ms, render: 11ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/users'
+}
+ GET /api/ring/users?from=-0.3141592653589793&to=3.4086280291449254&limit=10000 500 in 41ms (compile: 36ms, render: 5ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/register'
+}
+ POST /api/ring/register 500 in 73ms (compile: 62ms, render: 11ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/users'
+}
+ GET /api/ring/users?from=-0.3141592653589793&to=3.4086280291449254&limit=10000 500 in 57ms (compile: 50ms, render: 7ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/register'
+}
+ POST /api/ring/register 500 in 182ms (compile: 168ms, render: 14ms)
+⨯ Error: DATABASE_URL or POSTGRES_URL environment variable is not set
+    at module evaluation (src/db/index.ts:8:11)
+    at module evaluation (src/app/api/ring/register/route.ts:3:1)
+    at Object.<anonymous> (.next/dev/server/app/api/ring/register/route.js:8:3)
+   6 |
+   7 | if (!connectionString) {
+>  8 |     throw new Error('DATABASE_URL or POSTGRES_URL environment variable is not set');
+     |           ^
+   9 | }
+  10 |
+  11 | const client = postgres(connectionString, { ssl: 'require' }); {
+  page: '/api/ring/users'
+}
+ GET /api/ring/users?from=-0.3141592653589793&to=3.4086280291449254&limit=10000 500 in 133ms (compile: 82ms, render: 52ms)
