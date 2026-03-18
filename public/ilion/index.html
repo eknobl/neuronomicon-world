@@ -474,6 +474,7 @@
       <!-- Controls — top right -->
       <div id="controls">
         <div class="stat-label">CONTROLS</div>
+        <div class="stat-row" id="view-name">&gt; VIEW: ORBITAL</div>
         <div class="stat-row">&gt; SPACE: CHANGE VIEW</div>
       </div>
 
@@ -485,9 +486,6 @@
       <!-- Tooltips (positioned by JS) -->
       <div class="tooltip" id="tooltip-star">TROY STAR</div>
       <div class="tooltip" id="tooltip-ring">ILION RING</div>
-      <div class="tooltip era-tip" id="tooltip-era-mining">ERA I  ·  MINING</div>
-      <div class="tooltip era-tip" id="tooltip-era-rush">ERA II  ·  THORIUM RUSH</div>
-      <div class="tooltip era-tip" id="tooltip-era-magi">ERA III  ·  MAGI</div>
     </div>
 
     <!-- ── FOOTER ── -->
@@ -635,7 +633,7 @@
         const pts = [];
         for (let i = 0; i <= segs; i++) {
           const a = ARC_S + (i / segs) * (ARC_E - ARC_S);
-          pts.push(V3(Math.cos(a) * r, y, Math.sin(a) * r));
+          pts.push(new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r));
         }
         return mkLine(pts, col, op);
       }
@@ -670,23 +668,23 @@
       }
 
       // Troy (star at ring center)
+      const troyGroup = new THREE.Group();
       {
-        const g = new THREE.Group();
-        g.add(
+        troyGroup.add(
           new THREE.Mesh(
-            new THREE.SphereGeometry(1.8, 8, 8),
+            new THREE.SphereGeometry(18, 16, 16),
             new THREE.MeshBasicMaterial({ color: 0xfff8ee }),
           ),
         );
         const corona = mkWire(
-          new THREE.TorusGeometry(4, 0.08, 4, 20),
+          new THREE.TorusGeometry(32, 0.4, 8, 40),
           0xffee88,
-          0.06,
+          0.3,
         );
         corona.rotation.x = Math.PI / 2;
-        g.add(corona);
-        g.add(new THREE.PointLight(0xfff8ee, 0.5, 800));
-        scene.add(g);
+        troyGroup.add(corona);
+        troyGroup.add(new THREE.PointLight(0xfff8ee, 1.5, 3000));
+        scene.add(troyGroup);
       }
 
       // Boneyard
@@ -727,7 +725,7 @@
           const pts = [];
           for (let j = 0; j <= 20; j++) {
             const a = ARC_E + (j / 20) * GAP * frac;
-            pts.push(V3(Math.cos(a) * R, 0, Math.sin(a) * R));
+            pts.push(new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R));
           }
           const op = 0.09 - i * 0.02;
           add(gOrbit, mkLine(pts, COL_GHOST, op), op);
@@ -735,160 +733,63 @@
       }
 
       // ═══════════════════════════════════════════════════════════════════════════════
-      // DRONE GROUP
+      // DRONE GROUP: SOLID STRUCTURE
       // ═══════════════════════════════════════════════════════════════════════════════
-
-      // A. Inner face (red) — ground
-      [-H, -H / 2, 0, H / 2, H].forEach((y) => {
-        const op = y === 0 ? 0.7 : 0.45;
-        add(gDrone, mkArc(RI, 240, y, COL_INNER, op), op);
-      });
-      for (let i = 0; i <= 36; i++) {
-        const a = ARC_S + (i / 36) * (ARC_E - ARC_S);
-        const op = i % 6 === 0 ? 0.35 : 0.16;
-        add(
-          gDrone,
-          mkLine(
-            [
-              V3(Math.cos(a) * RI, -H, Math.sin(a) * RI),
-              V3(Math.cos(a) * RI, H, Math.sin(a) * RI),
-            ],
-            COL_INNER,
-            op,
-          ),
-          op,
-        );
-      }
-
-      // B. Outer hull (blue) — ceiling
-      [-H, 0, H].forEach((y) => {
-        const op = y === 0 ? 0.45 : 0.28;
-        add(gDrone, mkArc(RO, 240, y, COL_OUTER, op), op);
-      });
-      for (let i = 0; i <= 22; i++) {
-        const a = ARC_S + (i / 22) * (ARC_E - ARC_S);
-        add(
-          gDrone,
-          mkLine(
-            [
-              V3(Math.cos(a) * RO, -H, Math.sin(a) * RO),
-              V3(Math.cos(a) * RO, H, Math.sin(a) * RO),
-            ],
-            COL_OUTER,
-            0.18,
-          ),
-          0.18,
-        );
-      }
-
-      // C. Top edge (yellow) y = +H
-      add(gDrone, mkArc(RI, 200, +H, COL_TOP, 0.5), 0.5);
-      add(gDrone, mkArc(RO, 200, +H, COL_TOP, 0.35), 0.35);
-
-      // D. Bottom edge (green) y = -H
-      add(gDrone, mkArc(RI, 200, -H, COL_BOT, 0.5), 0.5);
-      add(gDrone, mkArc(RO, 200, -H, COL_BOT, 0.35), 0.35);
-
-      // E. Cross-section ribs
-      {
-        const N_FRAMES = 22;
-        for (let i = 0; i <= N_FRAMES; i++) {
-          const a = ARC_S + (i / N_FRAMES) * (ARC_E - ARC_S);
-          const xi = Math.cos(a) * RI,
-            zi = Math.sin(a) * RI;
-          const xo = Math.cos(a) * RO,
-            zo = Math.sin(a) * RO;
-          add(
-            gDrone,
-            mkLine([V3(xi, -H, zi), V3(xi, H, zi)], COL_INNER, 0.28),
-            0.28,
-          );
-          add(
-            gDrone,
-            mkLine([V3(xo, -H, zo), V3(xo, H, zo)], COL_OUTER, 0.22),
-            0.22,
-          );
-          add(
-            gDrone,
-            mkLine([V3(xi, -H, zi), V3(xo, -H, zo)], COL_BOT, 0.2),
-            0.2,
-          );
-          add(
-            gDrone,
-            mkLine([V3(xi, H, zi), V3(xo, H, zo)], COL_TOP, 0.2),
-            0.2,
-          );
-          add(
-            gDrone,
-            mkLine([V3(xi, 0, zi), V3(xo, 0, zo)], COL_STRUCT, 0.18),
-            0.18,
-          );
-        }
-      }
-
-      // F. End-caps
-      [ARC_S, ARC_E].forEach((a) => {
-        const xi = Math.cos(a) * RI,
-          zi = Math.sin(a) * RI;
-        const xo = Math.cos(a) * RO,
-          zo = Math.sin(a) * RO;
-        add(
-          gDrone,
-          mkLine([V3(xi, -H, zi), V3(xi, H, zi)], COL_INNER, 0.8),
-          0.8,
-        );
-        add(
-          gDrone,
-          mkLine([V3(xo, -H, zo), V3(xo, H, zo)], COL_OUTER, 0.65),
-          0.65,
-        );
-        add(
-          gDrone,
-          mkLine([V3(xi, -H, zi), V3(xo, -H, zo)], COL_BOT, 0.7),
-          0.7,
-        );
-        add(gDrone, mkLine([V3(xi, H, zi), V3(xo, H, zo)], COL_TOP, 0.7), 0.7);
+      
+      const arcLen = ARC_E - ARC_S;
+      const solidMat = new THREE.MeshStandardMaterial({ 
+        color: 0x111111, 
+        roughness: 0.8, 
+        metalness: 0.2,
+        transparent: true
       });
 
-      // G. Gap ghost arcs
-      {
-        const GAP = Math.PI * 2 - (ARC_E - ARC_S);
-        [0.18, 0.45, 0.72].forEach((frac) => {
-          [
-            [RI, 0.09],
-            [RO, 0.06],
-          ].forEach(([r, op]) => {
-            const pts = [];
-            for (let j = 0; j <= 16; j++) {
-              const a = ARC_E + (j / 16) * GAP * frac;
-              pts.push(V3(Math.cos(a) * r, 0, Math.sin(a) * r));
-            }
-            add(gDrone, mkLine(pts, COL_GHOST, op), op);
-          });
-        });
-        for (let i = 0; i < 12; i++) {
-          const s = hsh("gap" + i);
-          const t = (s % 1000) / 1000;
-          const a = ARC_E + t * GAP;
-          const rr = R * 0.92 + (s % 25);
-          const op = 0.07 + (s % 7) * 0.008;
-          const m = mkWire(
-            new THREE.BoxGeometry(
-              2 + (s % 4),
-              2 + ((s >> 4) & 4),
-              2 + ((s >> 8) & 3),
-            ),
-            COL_GHOST,
-            op,
-          );
-          m.position.set(
-            Math.cos(a) * rr,
-            (((s >> 12) & 0xff) / 255 - 0.5) * H,
-            Math.sin(a) * rr,
-          );
-          add(gDrone, m, op);
-        }
-      }
+      // 1. Inner Ground Plane (The floor where buildings sit)
+      // A cylinder segment mapped to the inside of RI
+      const groundGeo = new THREE.CylinderGeometry(RI, RI, H * 2, 64, 1, true, ARC_S, arcLen);
+      const groundMesh = new THREE.Mesh(groundGeo, solidMat);
+      groundMesh.material.side = THREE.BackSide; // Render on the inside
+      add(gDrone, groundMesh, 1.0);
+
+      // 2. Outer Ceiling (The sky/back wall)
+      const ceilMat = new THREE.MeshStandardMaterial({ 
+        color: 0x333333, 
+        roughness: 0.9, 
+        metalness: 0.1,
+        transparent: true
+      });
+      const ceilGeo = new THREE.CylinderGeometry(RO, RO, H * 2, 64, 1, true, ARC_S, arcLen);
+      const ceilMesh = new THREE.Mesh(ceilGeo, ceilMat);
+      ceilMesh.material.side = THREE.FrontSide; // Viewed from inside
+      add(gDrone, ceilMesh, 1.0);
+
+      // 3. Side Walls (Connecting Ground to Ceiling)
+      // Top Side
+      const topWallGeo = new THREE.RingGeometry(RI, RO, 64, 1, ARC_S, arcLen);
+      const topWallMesh = new THREE.Mesh(topWallGeo, solidMat);
+      topWallMesh.rotation.x = Math.PI / 2;
+      topWallMesh.position.y = H;
+      add(gDrone, topWallMesh, 1.0);
+
+      // Bottom Side
+      const botWallGeo = new THREE.RingGeometry(RI, RO, 64, 1, ARC_S, arcLen);
+      const botWallMesh = new THREE.Mesh(botWallGeo, solidMat);
+      botWallMesh.rotation.x = -Math.PI / 2;
+      botWallMesh.position.y = -H;
+      add(gDrone, botWallMesh, 1.0);
+
+      // 4. End Caps
+      const endCapGeo = new THREE.PlaneGeometry(RO - RI, H * 2);
+      
+      const capStart = new THREE.Mesh(endCapGeo, solidMat);
+      capStart.position.set(Math.cos(ARC_S) * (RI + (RO - RI)/2), 0, Math.sin(ARC_S) * (RI + (RO - RI)/2));
+      capStart.rotation.y = -ARC_S + Math.PI / 2;
+      add(gDrone, capStart, 1.0);
+
+      const capEnd = new THREE.Mesh(endCapGeo, solidMat);
+      capEnd.position.set(Math.cos(ARC_E) * (RI + (RO - RI)/2), 0, Math.sin(ARC_E) * (RI + (RO - RI)/2));
+      capEnd.rotation.y = -ARC_E - Math.PI / 2;
+      add(gDrone, capEnd, 1.0);
 
       // ─── CITY — GITHUB REPOS AS BUILDINGS ON INNER RED SURFACE ──────────────────
       const gCity = new THREE.Group();
@@ -922,70 +823,283 @@
         Java: 0xb07219,
       };
 
-      function placeBuilding(
-        angle,
-        yCenter,
-        radialDepth,
-        vertHeight,
-        arcWidth,
-        color,
-        opacity,
-      ) {
-        const m = mkWire(
-          new THREE.BoxGeometry(radialDepth, vertHeight, arcWidth),
-          color,
-          opacity,
-        );
-        m.rotation.y = -angle;
-        m.position.set(
-          Math.cos(angle) * (RI - radialDepth / 2),
-          yCenter,
-          Math.sin(angle) * (RI - radialDepth / 2),
-        );
-        add(gCity, m, opacity);
-      }
-
-      function clearCity() {
-        while (gCity.children.length > 0) {
-          const c = gCity.children[0];
-          gCity.remove(c);
-          if (c.geometry) c.geometry.dispose();
-          if (c.material) c.material.dispose();
-        }
-      }
-
       const cityStatusEl = document.getElementById("city-status");
       function setCityStatus(msg) {
         if (cityStatusEl) cityStatusEl.textContent = msg;
+      }
+
+      let frameId;
+      let cityInstancedMesh;
+      let mockUsers = [];
+      const NUM_MOCK_USERS = 10000;
+
+      // Shader Constants
+      const ATLAS_SIZE = 2048;
+      const ATLAS_CELL = 8;
+      const ATLAS_COLS = ATLAS_SIZE / ATLAS_CELL;
+      const ATLAS_BAND_ROWS = 42;
+      const ATLAS_LIT_PCTS = [0.2, 0.35, 0.5, 0.65, 0.8, 0.95];
+
+      let windowAtlasTexture = null;
+
+      function colorToABGR(hex) {
+        const c = new THREE.Color(hex);
+        return (
+          255 << 24 |
+          (Math.round(c.b * 255) << 16) |
+          (Math.round(c.g * 255) << 8) |
+          Math.round(c.r * 255)
+        );
+      }
+
+      function createWindowAtlas() {
+        const WS = 6;
+        const canvas = document.createElement("canvas");
+        canvas.width = ATLAS_SIZE;
+        canvas.height = ATLAS_SIZE;
+        const ctx = canvas.getContext("2d");
+
+        const imageData = ctx.createImageData(ATLAS_SIZE, ATLAS_SIZE);
+        const buf32 = new Uint32Array(imageData.data.buffer);
+
+        const faceABGR = colorToABGR("#151b2b");
+        const litABGRs = ["#f2795c", "#70b2db", "#c9d1d9"].map(colorToABGR);
+        const offABGR = colorToABGR("#0d121c");
+
+        buf32.fill(faceABGR);
+
+        let s = 42;
+        const rand = () => {
+          s = (s * 16807) % 2147483647;
+          return (s - 1) / 2147483646;
+        };
+
+        for (let band = 0; band < ATLAS_LIT_PCTS.length; band++) {
+          const litPct = ATLAS_LIT_PCTS[band];
+          const bandStart = band * ATLAS_BAND_ROWS;
+          for (let r = 0; r < ATLAS_BAND_ROWS; r++) {
+            const rowY = (bandStart + r) * ATLAS_CELL;
+            for (let c = 0; c < ATLAS_COLS; c++) {
+              const px = c * ATLAS_CELL;
+              const abgr = rand() < litPct
+                ? litABGRs[Math.floor(rand() * litABGRs.length)]
+                : offABGR;
+              for (let dy = 0; dy < WS; dy++) {
+                const rowOffset = (rowY + dy) * ATLAS_SIZE + px;
+                for (let dx = 0; dx < WS; dx++) {
+                  buf32[rowOffset + dx] = abgr;
+                }
+              }
+            }
+          }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.flipY = false;
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.magFilter = THREE.NearestFilter;
+        tex.minFilter = THREE.NearestFilter;
+        tex.colorSpace = THREE.SRGBColorSpace;
+        
+        return tex;
+      }
+
+      function clearCity() {
+        if (cityInstancedMesh) {
+          gCity.remove(cityInstancedMesh);
+          cityInstancedMesh.geometry.dispose();
+          cityInstancedMesh.material.dispose();
+          cityInstancedMesh = null;
+        }
       }
 
       async function buildCity(username) {
         setCityStatus("> LOADING ...");
         clearCity();
         try {
-          // Register (or re-sync) user in the ring DB
-          const regRes = await fetch("/api/ring/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username }),
-          });
-          if (!regRes.ok) {
-            const err = await regRes.json().catch(() => ({}));
-            throw new Error(err.error || `ERROR ${regRes.status}`);
+          let user = {};
+          try {
+            // Register (or re-sync) user in the ring DB
+            const regRes = await fetch("/api/ring/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username }),
+            });
+            if (!regRes.ok) {
+              const err = await regRes.json().catch(() => ({}));
+              throw new Error(err.error || `ERROR ${regRes.status}`);
+            }
+            user = await regRes.json();
+          } catch (e) {
+            console.warn("[Ilion] Register API failed, falling back to dummy user.", e);
+            user = { ring_angle: ARC_S + (ARC_E - ARC_S) / 2 };
           }
-          const user = await regRes.json();
 
-          // Load all registered colonists in the full arc
-          const usersRes = await fetch(
-            `/api/ring/users?from=${ARC_S}&to=${ARC_E}&limit=500`,
-          );
-          if (!usersRes.ok) throw new Error("Failed to load ring data");
-          const users = await usersRes.json();
-          if (!Array.isArray(users) || !users.length)
-            throw new Error("NO DATA");
+          let users = [];
+          try {
+            // Load all registered colonists in the full arc
+            const usersRes = await fetch(
+              `/api/ring/users?from=${ARC_S}&to=${ARC_E}&limit=10000`,
+            );
+            if (!usersRes.ok) throw new Error("Failed to load ring data");
+            users = await usersRes.json();
+            if (!Array.isArray(users) || !users.length)
+              throw new Error("NO DATA");
+          } catch (apiError) {
+            console.warn("[Ilion] API failed, using 10,000 mock users for testing InstancedMesh.", apiError);
+            users = [];
+            for (let i = 0; i < 10000; i++) {
+              users.push({
+                username: "colonist_" + i,
+                ring_angle: ARC_S + Math.random() * (ARC_E - ARC_S),
+                star_count: Math.random() > 0.8 ? Math.floor(Math.random() * 50) : 0,
+                repo_count: Math.floor(Math.random() * 100),
+                top_language: Object.keys(LANG_COLORS)[Math.floor(Math.random() * Object.keys(LANG_COLORS).length)]
+              });
+            }
+          }
+
+          // Calculate total instances needed (1 base + 2 if stars > 0)
+          let totalInstances = 0;
+          for (let i = 0; i < users.length; i++) {
+            totalInstances += (users[i].star_count > 0 ? 3 : 1);
+          }
+
+          if (!windowAtlasTexture) {
+            windowAtlasTexture = createWindowAtlas();
+          }
+
+          // Initialize InstancedMesh
+          const geometry = new THREE.BoxGeometry(1, 1, 1);
+          geometry.computeVertexNormals();
+
+          // We need custom attributes for UV mapping the CanvasAtlas
+          const uvFrontData = new Float32Array(totalInstances * 4);
+          const uvSideData = new Float32Array(totalInstances * 4);
+          const tintData = new Float32Array(totalInstances * 4);
+          const liveData = new Float32Array(totalInstances);
+
+          geometry.setAttribute("aUvFront", new THREE.InstancedBufferAttribute(uvFrontData, 4));
+          geometry.setAttribute("aUvSide", new THREE.InstancedBufferAttribute(uvSideData, 4));
+          geometry.setAttribute("aTint", new THREE.InstancedBufferAttribute(tintData, 4));
+          geometry.setAttribute("aLive", new THREE.InstancedBufferAttribute(liveData, 1));
+
+          const vertexShader = `
+            attribute vec4 aUvFront;
+            attribute vec4 aUvSide;
+            attribute vec4 aTint;
+            attribute float aLive;
+
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            varying vec4 vUvFront;
+            varying vec4 vUvSide;
+            varying vec4 vTint;
+            varying float vLive;
+            varying vec3 vViewPos;
+
+            void main() {
+              vUv = uv;
+              vNormal = normalize(mat3(instanceMatrix) * normal);
+              vUvFront = aUvFront;
+              vUvSide = aUvSide;
+              vTint = aTint;
+              vLive = aLive;
+
+              vec4 mvPos = modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+              vViewPos = mvPos.xyz;
+              gl_Position = projectionMatrix * mvPos;
+            }
+          `;
+
+          const fragmentShader = `
+            uniform sampler2D uAtlas;
+            uniform vec3 uFaceColor;
+            uniform float uOpacity;
+
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            varying vec4 vUvFront;
+            varying vec4 vUvSide;
+            varying vec4 vTint;
+            varying float vLive;
+            varying vec3 vViewPos;
+
+            void main() {
+              float fogDepth = length(vViewPos);
+              if (fogDepth > 3500.0) discard;
+
+              vec3 absN = abs(vNormal);
+              float isRoof = step(0.5, absN.y);
+
+              // Choose side face if normal points mostly along X, front/back if along Z
+              bool isFrontBack = absN.z > absN.x;
+              vec4 uvParams = isFrontBack ? vUvFront : vUvSide;
+
+              vec2 atlasUv = uvParams.xy + vUv * uvParams.zw;
+              vec3 wallColor = texture2D(uAtlas, atlasUv).rgb;
+
+              // Color Tint matching git-city logic
+              if (vTint.a > 0.5) {
+                float isFacePixel = step(length(wallColor - uFaceColor), 0.08); // is background wall
+                vec3 blendedTint = mix(uFaceColor, vTint.rgb, 0.5); // Blend base with unique color
+                wallColor = mix(wallColor, blendedTint, isFacePixel); // Only tint walls, keep windows bright
+              }
+
+              // Glow calculation (simulating ambient + emissive windows)
+              float ambientBase = 0.25;
+              vec3 emissive = wallColor * 1.8;
+              vec3 wallFinal = wallColor * ambientBase + emissive;
+              
+              // Boost live modules
+              vec3 liveBoost = vec3(1.4, 1.35, 1.2);
+              wallFinal = mix(wallFinal, wallFinal * liveBoost, vLive);
+
+              // Solid brighter roof
+              vec3 roofFinal = vTint.rgb * 1.5;
+              vec3 color = mix(wallFinal, roofFinal, isRoof);
+
+              // Simple directional lighting
+              vec3 lightDir = normalize(vec3(0.3, 1.0, 0.5));
+              float diffuse = max(dot(vNormal, lightDir), 0.0) * 0.3 + 0.7;
+              color *= diffuse;
+
+              // Distance fog
+              float fogFactor = smoothstep(500.0, 3500.0, fogDepth);
+              color = mix(color, vec3(0.04, 0.08, 0.16), fogFactor);
+
+              gl_FragColor = vec4(color, uOpacity);
+            }
+          `;
+
+          const material = new THREE.ShaderMaterial({ 
+            uniforms: {
+              uAtlas: { value: windowAtlasTexture },
+              uFaceColor: { value: new THREE.Color("#151b2b") },
+              uOpacity: { value: 1.0 }
+            },
+            vertexShader,
+            fragmentShader,
+            transparent: true,
+            depthWrite: true,
+          });
+
+          cityInstancedMesh = new THREE.InstancedMesh(geometry, material, totalInstances);
+          // Required for dynamic coloring in older Three.js versions but recommended for new ones too
+          cityInstancedMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+          
+          // Apply individual alpha per instance via custom attribute or relying on base opacity + color
+          // We will tint colors slightly to approximate the original styling.
+          
+          const dummy = new THREE.Object3D();
+          const colorObj = new THREE.Color();
+          
+          let instanceIdx = 0;
 
           users.forEach((u) => {
-            // Use plot center if available, fall back to ring_angle for legacy rows
             const angle = (u.arc_start != null && u.arc_end != null)
               ? (u.arc_start + u.arc_end) / 2
               : u.ring_angle;
@@ -993,40 +1107,110 @@
             const repos = u.repo_count || 1;
             const langCol = LANG_COLORS[u.top_language] || 0xff5555;
             const col = blendHex(ERA_COLORS[getEra(angle)], langCol, 0.35);
+            
             const radial = 1.5 + Math.min(stars * 0.05, 3.5);
             const height = 3.5 + Math.min(repos / 10, 5);
-            placeBuilding(angle, 0, radial, height, 1.2, col, 0.6);
+            
+            colorObj.setHex(col);
+
+            // Base building
+            dummy.scale.set(radial, height, 1.2);
+            dummy.position.set(
+              Math.cos(angle) * (RI - radial / 2),
+              0,
+              Math.sin(angle) * (RI - radial / 2)
+            );
+            dummy.rotation.set(0, -angle, 0);
+            dummy.updateMatrix();
+            cityInstancedMesh.setMatrixAt(instanceIdx, dummy.matrix);
+            cityInstancedMesh.setColorAt(instanceIdx, colorObj);
+
+            // Populate UV and Tint Attributes based on Git City logic
+            const seedFront = instanceIdx * 3 + 1;
+            const seedSide = instanceIdx * 7 + 2;
+
+            const assignUv = (arr, offset, seed) => {
+              const r = ((seed * 9301 + 49297) % 233280) / 233280;
+              const band = Math.floor(r * ATLAS_LIT_PCTS.length);
+              const row = band * ATLAS_BAND_ROWS + (seed % ATLAS_BAND_ROWS);
+              const col = seed % ATLAS_COLS;
+              arr.set([
+                (col * ATLAS_CELL) / ATLAS_SIZE,
+                1.0 - ((row + 1) * ATLAS_CELL) / ATLAS_SIZE,
+                ATLAS_CELL / ATLAS_SIZE,
+                ATLAS_CELL / ATLAS_SIZE
+              ], offset);
+            };
+
+            assignUv(uvFrontData, instanceIdx * 4, seedFront);
+            assignUv(uvSideData, instanceIdx * 4, seedSide);
+            
+            tintData.set([colorObj.r, colorObj.g, colorObj.b, 1.0], instanceIdx * 4);
+            liveData[instanceIdx] = (Math.random() > 0.9) ? 1.0 : 0.0;
+
+            instanceIdx++;
+
+            // Star wings
             if (stars > 0) {
-              placeBuilding(
-                angle,
+              const wingRadial = radial * 0.55;
+              const wingHeight = height * 0.45;
+              const wingWidth = 1.0;
+              
+              // Bottom wing (-7)
+              dummy.scale.set(wingRadial, wingHeight, wingWidth);
+              dummy.position.set(
+                Math.cos(angle) * (RI - wingRadial / 2),
                 -7,
-                radial * 0.55,
-                height * 0.45,
-                1.0,
-                col,
-                0.3,
+                Math.sin(angle) * (RI - wingRadial / 2)
               );
-              placeBuilding(
-                angle,
-                7,
-                radial * 0.55,
-                height * 0.45,
-                1.0,
-                col,
-                0.3,
-              );
+              dummy.rotation.set(0, -angle, 0);
+              dummy.updateMatrix();
+              cityInstancedMesh.setMatrixAt(instanceIdx, dummy.matrix);
+              
+              // Slightly darker/faded for wings logic:
+              colorObj.setHex(col).lerp(new THREE.Color(0x000000), 0.3);
+              cityInstancedMesh.setColorAt(instanceIdx, colorObj);
+              
+              assignUv(uvFrontData, instanceIdx * 4, seedFront + 100);
+              assignUv(uvSideData, instanceIdx * 4, seedSide + 100);
+              tintData.set([colorObj.r, colorObj.g, colorObj.b, 1.0], instanceIdx * 4);
+              liveData[instanceIdx] = 0.0;
+              
+              instanceIdx++;
+
+              // Top wing (+7)
+              dummy.position.y = 7;
+              dummy.updateMatrix();
+              cityInstancedMesh.setMatrixAt(instanceIdx, dummy.matrix);
+              cityInstancedMesh.setColorAt(instanceIdx, colorObj);
+              
+              assignUv(uvFrontData, instanceIdx * 4, seedFront + 200);
+              assignUv(uvSideData, instanceIdx * 4, seedSide + 200);
+              tintData.set([colorObj.r, colorObj.g, colorObj.b, 1.0], instanceIdx * 4);
+              liveData[instanceIdx] = 0.0;
+              
+              instanceIdx++;
             }
           });
+
+          cityInstancedMesh.instanceMatrix.needsUpdate = true;
+          // if (cityInstancedMesh.instanceColor) cityInstancedMesh.instanceColor.needsUpdate = true;
+          
+          gCity.add(cityInstancedMesh);
+          
+          // Add this custom userData opacity logic so the "blendGroups" function (tDrone lerp) 
+          // can smoothly fade the instanced mesh geometry in and out
+          add(gCity, cityInstancedMesh, 0.6);
 
           setCityStatus(`> ${users.length} COLONISTS`);
 
           // Fly camera to this user's permanent slot
-          if (typeof user.ring_angle === "number") {
+          if (user && typeof user.ring_angle === "number") {
             droneAngle = user.ring_angle;
             droneDir = 1;
           }
         } catch (e) {
-          console.warn("[Ilion] City fetch failed:", e);
+          console.warn("[Ilion] City build failed:", e);
           setCityStatus(`> ${e.message}`);
         }
       }
@@ -1057,40 +1241,31 @@
       const ORBITAL_TGT = new THREE.Vector3(0, 0, 0);
       const ORBITAL_FOV = 44;
 
+      const camPos = ORBITAL_POS.clone();
+      const camTgt = ORBITAL_TGT.clone();
+
       const DRONE_POS_R = RI - 5;
       const DRONE_TGT_R = RI - 20;
       const DRONE_LOOKAHEAD = 0.32;
       const DRONE_FOV = 72;
       const DRONE_ADVANCE = 0.0015;
 
-      function goalDronePos() {
-        return V3(
-          Math.cos(droneAngle) * DRONE_POS_R,
-          0,
-          Math.sin(droneAngle) * DRONE_POS_R,
-        );
-      }
-      function goalDroneTgt() {
-        const la = droneAngle + DRONE_LOOKAHEAD * droneDir;
-        return V3(Math.cos(la) * DRONE_TGT_R, 0, Math.sin(la) * DRONE_TGT_R);
-      }
-
-      const camPos = ORBITAL_POS.clone();
-      const camTgt = ORBITAL_TGT.clone();
-      camera.fov = ORBITAL_FOV;
-      camera.position.copy(camPos);
-      camera.lookAt(camTgt);
-      camera.updateProjectionMatrix();
-
       function getGoalPos() {
         return mode === "orbital" || mode === "flyOut"
           ? ORBITAL_POS
-          : goalDronePos();
+          : dronePos;
       }
+
+      // Preallocate for animate loop
+      const _fwd = new THREE.Vector3();
+      const _idealLook = new THREE.Vector3();
+
       function getGoalTgt() {
-        return mode === "orbital" || mode === "flyOut"
-          ? ORBITAL_TGT
-          : goalDroneTgt();
+        if (mode === "orbital" || mode === "flyOut") return ORBITAL_TGT;
+        // In Drone mode, look slightly ahead of the current dronePos
+        _fwd.set(-Math.sin(yaw), Math.sin(pitch), -Math.cos(yaw)).normalize();
+        _idealLook.copy(dronePos).addScaledVector(_fwd, 50);
+        return _idealLook;
       }
       function getGoalFov() {
         return mode === "orbital" || mode === "flyOut"
@@ -1103,94 +1278,95 @@
       const statEl = document.getElementById("status-line"); // may be null now
 
       const HINTS = {
-        orbital: "SPACE — APPROACH THE RING",
+        orbital: "SPACE — APPROACH RING",
         flyIn: "DESCENDING TO INNER SURFACE …",
-        drone: "SPACE — PULL BACK  ·  SCROLL ADVANCE/RETREAT  ·  DRAG TO SWEEP",
+        drone: "SPACE — PULL BACK  ·  MOUSE/WASD — STEER  ·  SCROLL/SHIFT — SPEED",
         flyOut: "ASCENDING …",
+      };
+
+      const VIEWS = {
+        orbital: "ORBITAL",
+        flyIn: "TRANSITION",
+        drone: "DRONE",
+        flyOut: "TRANSITION",
       };
 
       function setMode(m) {
         mode = m;
         if (hintEl) hintEl.textContent = HINTS[m] || "";
+        const viewEl = document.getElementById("view-name");
+        if (viewEl) viewEl.textContent = "> VIEW: " + (VIEWS[m] || m.toUpperCase());
       }
+
+      // ─── FREE-FLIGHT MECHANICS ───────────────────────────────────────────────────
+      let yaw = Math.PI / 2; // Face ring center initially
+      let pitch = 0;
+      let bank = 0;
+      let flySpeed = 27.5;
+      const dronePos = new THREE.Vector3(0, 120, R - 200); // Start near the ring
+
+      const keys = {};
+      const mouse = { x: 0, y: 0 };
+
+      const DEFAULT_FLY_SPEED = 27.5;
+      const MIN_FLY_SPEED = 10;
+      const MAX_FLY_SPEED = 90;
+      const DEADZONE = 0.08;
+
+      function deadzoneCurve(v) {
+        const abs = Math.abs(v);
+        if (abs < DEADZONE) return 0;
+        const adjusted = (abs - DEADZONE) / (1 - DEADZONE);
+        return Math.sign(v) * adjusted * adjusted;
+      }
+
+      window.addEventListener("keydown", (e) => {
+        keys[e.code] = true;
+        if (e.code === "Space") {
+          e.preventDefault();
+          if (mode === "orbital") {
+             setMode("flyIn");
+             // Initialize dronePos to roughly below the orbital camera on the ring surface
+             const angle = Math.atan2(ORBITAL_POS.z, ORBITAL_POS.x);
+             yaw = angle + Math.PI / 2; // Face ring center
+             dronePos.set(
+               Math.cos(angle) * (R - 50),
+               150, // High up to start
+               Math.sin(angle) * (R - 50)
+             );
+          } else if (mode === "drone" || mode === "flyIn") setMode("flyOut");
+          else if (mode === "flyOut") setMode("flyIn");
+        }
+        if (e.code === "Escape" && (mode === "drone" || mode === "flyIn")) {
+          setMode("flyOut");
+        }
+      });
+
+      window.addEventListener("keyup", (e) => {
+        keys[e.code] = false;
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (mode === "drone") {
+          mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -((e.clientY / window.innerHeight) * 2 - 1);
+        } else {
+          mouse.x = 0;
+          mouse.y = 0;
+        }
+      });
 
       window.addEventListener(
         "wheel",
         (e) => {
           if (mode === "orbital" && e.deltaY > 15) {
             setMode("flyIn");
-            droneAngle = ARC_S;
-          } else if (mode === "drone" && e.deltaY > 0) {
-            droneAngle = Math.min(ARC_E - 0.15, droneAngle + 0.07);
-          } else if (mode === "drone" && e.deltaY < 0) {
-            droneAngle -= 0.07;
-            if (droneAngle < ARC_S + 0.05) setMode("flyOut");
+          } else if (mode === "drone") {
+            flySpeed = Math.max(MIN_FLY_SPEED, Math.min(MAX_FLY_SPEED, flySpeed - e.deltaY * 0.05));
           }
         },
         { passive: true },
       );
-
-      window.addEventListener("keydown", (e) => {
-        if (e.code === "Space") {
-          e.preventDefault();
-          if (mode === "orbital") {
-            setMode("flyIn");
-            droneAngle = ARC_S;
-          } else if (mode === "drone" || mode === "flyIn") setMode("flyOut");
-          else if (mode === "flyOut") setMode("flyIn");
-          return;
-        }
-        if (e.key === "Escape" && (mode === "drone" || mode === "flyIn"))
-          setMode("flyOut");
-        if (e.key === "ArrowRight" && mode === "drone")
-          droneAngle = Math.min(ARC_E - 0.15, droneAngle + 0.05);
-        if (e.key === "ArrowLeft" && mode === "drone") {
-          droneAngle -= 0.05;
-          if (droneAngle < ARC_S + 0.05) setMode("flyOut");
-        }
-      });
-
-      let dragX = null;
-      renderer.domElement.addEventListener("mousedown", (e) => {
-        if (mode === "drone") dragX = e.clientX;
-      });
-      renderer.domElement.addEventListener("mousemove", (e) => {
-        if (dragX === null || mode !== "drone") return;
-        droneAngle -= (e.clientX - dragX) * 0.003;
-        droneAngle = Math.max(ARC_S + 0.01, Math.min(ARC_E - 0.1, droneAngle));
-        dragX = e.clientX;
-      });
-      renderer.domElement.addEventListener("mouseup", () => {
-        dragX = null;
-      });
-      renderer.domElement.addEventListener("mouseleave", () => {
-        dragX = null;
-      });
-
-      let touchX = null;
-      renderer.domElement.addEventListener(
-        "touchstart",
-        (e) => {
-          if (mode === "drone") touchX = e.touches[0].clientX;
-        },
-        { passive: true },
-      );
-      renderer.domElement.addEventListener(
-        "touchmove",
-        (e) => {
-          if (touchX === null || mode !== "drone") return;
-          droneAngle -= (e.touches[0].clientX - touchX) * 0.003;
-          droneAngle = Math.max(
-            ARC_S + 0.01,
-            Math.min(ARC_E - 0.1, droneAngle),
-          );
-          touchX = e.touches[0].clientX;
-        },
-        { passive: true },
-      );
-      renderer.domElement.addEventListener("touchend", () => {
-        touchX = null;
-      });
 
       // ─── UNITS TOGGLE ─────────────────────────────────────────────────────────────
       const DIMS = {
@@ -1231,20 +1407,18 @@
       // Point on ring arc — use the lowest visible point (near bottom of screen in orbital view)
       const RING_TOOLTIP_ANGLE = (ARC_S + ARC_E) / 2 + 0.4;
 
-      // Era tooltip elements + their anchor angles (midpoint of each era's arc)
-      const ERA_TIPS = [
-        { el: document.getElementById("tooltip-era-mining"), angle: (ARC_S + ERA_MINING_END) / 2 },
-        { el: document.getElementById("tooltip-era-rush"),   angle: (ERA_MINING_END + ERA_RUSH_END) / 2 },
-        { el: document.getElementById("tooltip-era-magi"),   angle: (ERA_RUSH_END + ARC_E) / 2 },
-      ];
+
 
       const eraHudEl = document.getElementById("era-hud");
 
       function projectToScreen(worldX, worldY, worldZ) {
-        const ndc = new THREE.Vector3(worldX, worldY, worldZ).project(camera);
+        const vec = new THREE.Vector3(worldX, worldY, worldZ);
+        vec.project(camera);
         return {
-          x: (ndc.x * 0.5 + 0.5) * window.innerWidth,
-          y: (ndc.y * -0.5 + 0.5) * window.innerHeight,
+          // vec.z < 1 ensures it's in front of camera
+          visible: vec.z < 1 && vec.z > -1,
+          x: (vec.x * 0.5 + 0.5) * window.innerWidth,
+          y: (vec.y * -0.5 + 0.5) * window.innerHeight,
         };
       }
 
@@ -1255,7 +1429,6 @@
         if (alpha < 0.01) {
           tooltipStar.style.opacity = "0";
           tooltipRing.style.opacity = "0";
-          ERA_TIPS.forEach(t => t.el.style.opacity = "0");
           return;
         }
 
@@ -1266,18 +1439,16 @@
         tooltipStar.style.opacity = alpha;
 
         // Project a point on the ring arc
-        const { x: rx, y: ry } = projectToScreen(Math.cos(RING_TOOLTIP_ANGLE) * R, 0, Math.sin(RING_TOOLTIP_ANGLE) * R);
-        tooltipRing.style.left = rx - tooltipRing.offsetWidth / 2 + "px";
-        tooltipRing.style.top  = ry - BANNER_H - tooltipRing.offsetHeight - 16 + "px";
-        tooltipRing.style.opacity = alpha;
+        const pRing = projectToScreen(Math.cos(RING_TOOLTIP_ANGLE) * R, 0, Math.sin(RING_TOOLTIP_ANGLE) * R);
+        if (pRing.visible) {
+          tooltipRing.style.left = pRing.x - tooltipRing.offsetWidth / 2 + "px";
+          tooltipRing.style.top  = pRing.y - BANNER_H - tooltipRing.offsetHeight - 16 + "px";
+          tooltipRing.style.opacity = alpha;
+        } else {
+          tooltipRing.style.opacity = "0";
+        }
 
-        // Era tooltips — project midpoint of each era's arc section
-        ERA_TIPS.forEach(({ el, angle }) => {
-          const { x, y } = projectToScreen(Math.cos(angle) * R, 0, Math.sin(angle) * R);
-          el.style.left    = x - el.offsetWidth / 2 + "px";
-          el.style.top     = y - BANNER_H - el.offsetHeight - 32 + "px";
-          el.style.opacity = alpha * 0.85;
-        });
+
       }
 
       // ─── ANIMATION ────────────────────────────────────────────────────────────────
@@ -1295,35 +1466,150 @@
             o.material.opacity = o.userData.baseOp * tO;
         });
         gDrone.traverse((o) => {
-          if (o.material && o.userData.baseOp !== undefined)
+          if (o.material && o.userData.baseOp !== undefined) {
             o.material.opacity = o.userData.baseOp * tD;
+            if (o.material.uniforms && o.material.uniforms.uOpacity) {
+              o.material.uniforms.uOpacity.value = Math.min(1.0, tD * 1.5); // Fade in slightly faster
+            }
+          }
         });
       }
+
+      // ─── PLAYER AVATAR: STARSHIP ───────────────────────────────────────────────────
+      const starship = new THREE.Group();
+      
+      const hullMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.6, roughness: 0.4 });
+      const wingMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.7, roughness: 0.4 });
+      const thrustMat = new THREE.MeshBasicMaterial({ color: 0x00ffff }); // Glowing cyan propulsors
+
+      // Main Fuselage (sleek cylinder pointing "forward" down Z axis)
+      const hullGeo = new THREE.CylinderGeometry(0.5, 2, 12, 8);
+      hullGeo.rotateX(Math.PI / 2);
+      const hull = new THREE.Mesh(hullGeo, hullMat);
+      starship.add(hull);
+
+      // Cockpit
+      const cockpitGeo = new THREE.BoxGeometry(1.5, 1, 4);
+      const cockpit = new THREE.Mesh(cockpitGeo, new THREE.MeshStandardMaterial({ color: 0x444444 }));
+      cockpit.position.set(0, 1.2, 2);
+      starship.add(cockpit);
+
+      // Wings (swept back)
+      const leftWingGeo = new THREE.BoxGeometry(6, 0.4, 4);
+      leftWingGeo.translate(3, 0, -1); // sweep back translation
+      leftWingGeo.rotateY(-0.3);       // sweep back rotation
+      const leftWing = new THREE.Mesh(leftWingGeo, wingMat);
+      leftWing.position.set(1.5, 0, -2);
+      starship.add(leftWing);
+
+      const rightWingGeo = new THREE.BoxGeometry(6, 0.4, 4);
+      rightWingGeo.translate(-3, 0, -1);
+      rightWingGeo.rotateY(0.3);
+      const rightWing = new THREE.Mesh(rightWingGeo, wingMat);
+      rightWing.position.set(-1.5, 0, -2);
+      starship.add(rightWing);
+
+      // Wing Propulsors (Thrusters)
+      const thrustGeo = new THREE.CylinderGeometry(0.6, 0.8, 3, 8);
+      thrustGeo.rotateX(Math.PI / 2);
+      
+      const leftEngine = new THREE.Mesh(thrustGeo, hullMat);
+      leftEngine.position.set(6, 0, -2);
+      const leftGlow = new THREE.Mesh(new THREE.CircleGeometry(0.5, 8), thrustMat);
+      leftGlow.position.set(0, 0, -1.51);
+      leftGlow.rotateY(Math.PI);
+      leftEngine.add(leftGlow);
+      starship.add(leftEngine);
+
+      const rightEngine = new THREE.Mesh(thrustGeo, hullMat);
+      rightEngine.position.set(-6, 0, -2);
+      const rightGlow = new THREE.Mesh(new THREE.CircleGeometry(0.5, 8), thrustMat);
+      rightGlow.position.set(0, 0, -1.51);
+      rightGlow.rotateY(Math.PI);
+      rightEngine.add(rightGlow);
+      starship.add(rightEngine);
+
+      // Optional: Engine trail light
+      const engineLight = new THREE.PointLight(0x00ffff, 2, 50);
+      engineLight.position.set(0, 0, -8);
+      starship.add(engineLight);
+
+      starship.scale.set(0.5, 0.5, 0.5);
+
+      gDrone.add(starship);
 
       function animate() {
         requestAnimationFrame(animate);
         tick += 0.001;
 
         const inTransit = mode === "flyIn" || mode === "flyOut";
-        const speed = inTransit ? 0.024 : mode === "drone" ? 0.12 : 0.06;
+        const isDrone = mode === "drone";
+
+        // Free-flight logic updates dronePos and angles
+        if (isDrone) {
+          const dt = 0.016; // Approx fixed timestep for smooth flight
+          let turnInput = deadzoneCurve(mouse.x);
+          if (keys["KeyA"] || keys["ArrowLeft"]) turnInput = -1;
+          if (keys["KeyD"] || keys["ArrowRight"]) turnInput = 1;
+          yaw -= turnInput * 2.0 * dt;
+
+          let altInput = deadzoneCurve(mouse.y);
+          if (keys["KeyW"] || keys["ArrowUp"]) altInput = 1;
+          if (keys["KeyS"] || keys["ArrowDown"]) altInput = -1;
+
+          let speedMult = 1;
+          if (keys["ShiftLeft"] || keys["ShiftRight"]) speedMult = 2;
+          if (keys["AltLeft"] || keys["AltRight"]) speedMult = 0.3;
+
+          const actualSpeed = flySpeed * speedMult;
+          dronePos.y += altInput * 55 * Math.sqrt(actualSpeed / DEFAULT_FLY_SPEED) * dt;
+          
+          // Altitude boundaries
+          dronePos.y = Math.max(20, Math.min(2000, dronePos.y));
+
+          _fwd.set(-Math.sin(yaw), 0, -Math.cos(yaw));
+          dronePos.addScaledVector(_fwd, actualSpeed * dt);
+
+          // Radial boundaries (Keep near the ring)
+          const distSq = dronePos.x * dronePos.x + dronePos.z * dronePos.z;
+          const dist = Math.sqrt(distSq);
+          const MIN_R = R - 1500;
+          const MAX_R = R + 100;
+
+          if (dist < MIN_R) {
+            dronePos.x = (dronePos.x / dist) * MIN_R;
+            dronePos.z = (dronePos.z / dist) * MIN_R;
+          } else if (dist > MAX_R) {
+            dronePos.x = (dronePos.x / dist) * MAX_R;
+            dronePos.z = (dronePos.z / dist) * MAX_R;
+          }
+
+          const targetBank = -turnInput * 0.55;
+          bank += (targetBank - bank) * 5 * dt;
+
+          const targetPitch = altInput * 0.7;
+          pitch += (targetPitch - pitch) * 6 * dt;
+
+          // Instead of updating droneAngle purely for rendering, we derive it from dronePos
+          // so the era lighting and spatial UI components still know where we are around the ring.
+          droneAngle = Math.atan2(dronePos.z, dronePos.x);
+          if (droneAngle < 0) droneAngle += Math.PI * 2;
+
+          // Update Starship transform
+          starship.position.copy(dronePos);
+          starship.rotation.set(pitch, yaw + Math.PI, bank, "YXZ");
+          starship.visible = true;
+        } else {
+          starship.visible = false;
+        }
+
+        const speed = inTransit ? 0.024 : isDrone ? 0.08 : 0.06;
 
         camPos.lerp(getGoalPos(), speed);
         camTgt.lerp(getGoalTgt(), speed);
         camera.fov += (getGoalFov() - camera.fov) * 0.04;
 
-        if (mode === "drone") {
-          droneAngle += DRONE_ADVANCE * droneDir;
-          if (droneAngle >= ARC_E - 0.15) {
-            droneAngle = ARC_E - 0.15;
-            droneDir = -1;
-          }
-          if (droneAngle <= ARC_S) {
-            droneAngle = ARC_S;
-            droneDir = 1;
-          }
-        }
-
-        camUpDrone.set(-Math.cos(droneAngle), 0, -Math.sin(droneAngle));
+        camUpDrone.set(0, 1, 0); // Use absolute UP to keep camera oriented properly in free-flight, instead of banking sideways
         camera.up.lerpVectors(UP_ORB, camUpDrone, tDrone).normalize();
         camera.updateProjectionMatrix();
         camera.position.copy(camPos);
@@ -1338,6 +1624,8 @@
           ORBITAL_POS.x = Math.sin(tick * 0.12) * 80;
           ORBITAL_POS.z = 420 + Math.sin(tick * 0.08) * 30;
         }
+
+        troyGroup.scale.setScalar(mode === "orbital" || mode === "flyOut" ? 0.1 : 1.0);
 
         blendGroups();
         updateTooltips();
