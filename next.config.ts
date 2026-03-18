@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  async rewrites() {
+  async redirects() {
     return [
       {
         source: "/ilion",
-        destination: "/ilion/index.html",
+        destination: "https://ilion.neuronomicon.world",
+        permanent: true,
       },
     ];
   },
