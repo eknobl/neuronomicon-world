@@ -30,15 +30,6 @@ export const PROJECTS: Project[] = [
         status: 'ONLINE',
     },
     {
-        id: 'NMC-003',
-        title: 'GRIND FIGHTER: ARENA',
-        tagline: 'Interactive Tournament Chronicles — powered by Claude',
-        tags: ['INTERACTIVE', 'AI-GENERATED', 'EXPERIMENT'],
-        color: '#ff8c42',
-        url: '/grind-fighter/arena',
-        status: 'ONLINE',
-    },
-    {
         id: 'NMC-004',
         title: 'ARCHIVE',
         tagline: 'Lore database — characters, factions, technology, locations',
@@ -54,15 +45,6 @@ export const PROJECTS: Project[] = [
         tags: ['INTERACTIVE', 'THREE.JS', 'TROY SYSTEM'],
         color: '#00e5cc',
         url: '/ilion',
-        status: 'ONLINE',
-    },
-    {
-        id: 'NMC-006',
-        title: 'STAR MAP',
-        tagline: '3D interactive map of the nearest stars to Earth',
-        tags: ['INTERACTIVE', 'THREE.JS', 'NAVIGATION'],
-        color: '#7c9fd4',
-        url: '/star-map/',
         status: 'ONLINE',
     },
 ];

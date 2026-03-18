@@ -1,4 +1,3 @@
-import StarMapGlobeClient from './StarMapGlobeClient';
 import { getAllArticles } from '@/lib/wiki';
 import { svgPaths } from './hud-svg-paths';
 
@@ -200,19 +199,6 @@ export default async function UniversePanel() {
           line-height: 1;
         }
 
-        /* Star map */
-        .up-starmap-block {
-          display: flex;
-          gap: 10px;
-          align-items: flex-start;
-        }
-        .up-starmap-globe-wrap {
-          flex: 1;
-          position: relative;
-          aspect-ratio: 3/1;
-          overflow: hidden;
-        }
-
         /* World building */
         .up-world-block {
           display: flex;
@@ -292,7 +278,6 @@ export default async function UniversePanel() {
 
         @media (max-width: 767px) {
           .up-panel { gap: 16px; overflow: visible; }
-          .up-starmap-globe-wrap { aspect-ratio: 2/1; }
         }
       `}</style>
 
@@ -312,20 +297,6 @@ export default async function UniversePanel() {
           <DoubleChevron />
           <span className="up-year-num">2234</span>
           <ArrowBracket />
-        </div>
-
-        {/* ── Star Map ──────────────────────────────────────── */}
-        <div className="up-starmap-block">
-          <div style={{ flexShrink: 0, paddingTop: '20px' }}>
-            <NotchedBox filled={false} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <p className="up-section-label">STAR MAP &gt;&gt;</p>
-            <div className="up-starmap-globe-wrap">
-              <StarMapGlobeClient />
-              <StarMapFrame />
-            </div>
-          </div>
         </div>
 
         {/* ── World Building ────────────────────────────────── */}
