@@ -909,6 +909,41 @@
       placeEraGate(ERA_MINING_END, ERA_COLORS.rush);  // cold → hot threshold
       placeEraGate(ERA_RUSH_END,   ERA_COLORS.magi);  // hot → ordered threshold
 
+      // ── Ship model ──────────────────────────────────────────────────────────────
+      // Camera up = radially-inward → world-Y appears horizontal on screen.
+      // Footprint (XZ on ring surface): 0.9 radial × 2.0 tangential = 1.8 sq units
+      //   = building base area (1.5 × 1.2 = 1.8).
+      // Wings along local/world-Y → appear horizontal (~19 % screen width at ~5.6 u).
+      const gShip = new THREE.Group();
+      gDrone.add(gShip);
+
+      // Fuselage — radial(X) × tangential(Z) footprint = 0.9 × 2.0
+      const shipHull = mkWire(new THREE.BoxGeometry(0.9, 0.3, 2.0), 0xccddff, 0.85);
+      add(gShip, shipHull, 0.85);
+
+      // Wings — span in world-Y (horizontal on screen)
+      const shipWings = mkWire(new THREE.BoxGeometry(0.25, 2.5, 0.5), 0x8899cc, 0.75);
+      shipWings.position.set(0, 0, 0.1);
+      add(gShip, shipWings, 0.75);
+
+      // Red wingtip pods
+      const tipL = mkWire(new THREE.BoxGeometry(0.15, 0.5, 0.3), 0xff2222, 0.9);
+      tipL.position.set(0, 1.5, 0.1);
+      add(gShip, tipL, 0.9);
+      const tipR = mkWire(new THREE.BoxGeometry(0.15, 0.5, 0.3), 0xff2222, 0.9);
+      tipR.position.set(0, -1.5, 0.1);
+      add(gShip, tipR, 0.9);
+
+      // Cockpit — on radially-inward face (pilot's "up" = local −X), near nose
+      const shipCockpit = mkWire(new THREE.BoxGeometry(0.2, 0.2, 0.3), 0xeeeeff, 0.7);
+      shipCockpit.position.set(-0.55, 0, 0.7);
+      add(gShip, shipCockpit, 0.7);
+
+      // Vertical tail fin — extends radially (appears vertical on screen)
+      const tailFin = mkWire(new THREE.BoxGeometry(0.5, 0.06, 0.12), 0x7184a0, 0.7);
+      tailFin.position.set(-0.7, 0, -1.1);
+      add(gShip, tailFin, 0.7);
+
       const LANG_COLORS = {
         JavaScript: 0xf1e05a,
         TypeScript: 0x3178c6,
@@ -1053,6 +1088,11 @@
       let droneAngle = ARC_S;
       let droneDir = 1; // +1 = forward toward ARC_E, -1 = reverse toward ARC_S
 
+      // ── Free-flight state ────────────────────────────────────────────────────
+      const flyPos = new THREE.Vector3();
+      let flyYaw = 0; // heading: ship faces (sin(flyYaw), 0, cos(flyYaw))
+      const flyKeys = { left: false, right: false, up: false, down: false, boost: false };
+
       const ORBITAL_POS = new THREE.Vector3(0, 265, 420);
       const ORBITAL_TGT = new THREE.Vector3(0, 0, 0);
       const ORBITAL_FOV = 44;
@@ -1063,16 +1103,28 @@
       const DRONE_FOV = 72;
       const DRONE_ADVANCE = 0.0015;
 
+      const CAM_BACK  = 15; // units behind ship
+      const CAM_UP    = 5;  // units above ship (radially inward = toward star)
+      const CAM_AHEAD = 20; // units ahead for look-target
+
+      // Radial-inward unit vector from flyPos (toward ring centre / star)
+      function radialUp() {
+        const r = Math.sqrt(flyPos.x * flyPos.x + flyPos.z * flyPos.z);
+        return r > 0.1 ? V3(-flyPos.x / r, 0, -flyPos.z / r) : V3(0, 1, 0);
+      }
+
       function goalDronePos() {
+        const fx = Math.sin(flyYaw), fz = Math.cos(flyYaw);
+        const ru = radialUp();
         return V3(
-          Math.cos(droneAngle) * DRONE_POS_R,
-          0,
-          Math.sin(droneAngle) * DRONE_POS_R,
+          flyPos.x - fx * CAM_BACK + ru.x * CAM_UP,
+          flyPos.y,
+          flyPos.z - fz * CAM_BACK + ru.z * CAM_UP,
         );
       }
       function goalDroneTgt() {
-        const la = droneAngle + DRONE_LOOKAHEAD * droneDir;
-        return V3(Math.cos(la) * DRONE_TGT_R, 0, Math.sin(la) * DRONE_TGT_R);
+        const fx = Math.sin(flyYaw), fz = Math.cos(flyYaw);
+        return V3(flyPos.x + fx * CAM_AHEAD, flyPos.y, flyPos.z + fz * CAM_AHEAD);
       }
 
       const camPos = ORBITAL_POS.clone();
@@ -1105,11 +1157,21 @@
       const HINTS = {
         orbital: "SPACE — APPROACH THE RING",
         flyIn: "DESCENDING TO INNER SURFACE …",
-        drone: "SPACE — PULL BACK  ·  SCROLL ADVANCE/RETREAT  ·  DRAG TO SWEEP",
+        drone: "ESC — PULL BACK  ·  W/S — ALTITUDE  ·  A/D — TURN  ·  DRAG — YAW  ·  SHIFT — BOOST",
         flyOut: "ASCENDING …",
       };
 
       function setMode(m) {
+        if (m === "flyIn" && (mode === "orbital" || mode === "flyOut")) {
+          // Initialise free-flight at ring entry
+          flyPos.set(
+            Math.cos(ARC_S) * DRONE_POS_R,
+            0,
+            Math.sin(ARC_S) * DRONE_POS_R,
+          );
+          flyYaw = -ARC_S; // face tangentially CCW: forward = (sin(-ARC_S), 0, cos(-ARC_S))
+          Object.keys(flyKeys).forEach(k => flyKeys[k] = false);
+        }
         mode = m;
         if (hintEl) hintEl.textContent = HINTS[m] || "";
       }
@@ -1119,12 +1181,8 @@
         (e) => {
           if (mode === "orbital" && e.deltaY > 15) {
             setMode("flyIn");
-            droneAngle = ARC_S;
-          } else if (mode === "drone" && e.deltaY > 0) {
-            droneAngle = Math.min(ARC_E - 0.15, droneAngle + 0.07);
-          } else if (mode === "drone" && e.deltaY < 0) {
-            droneAngle -= 0.07;
-            if (droneAngle < ARC_S + 0.05) setMode("flyOut");
+          } else if (mode === "drone" && e.deltaY < -20) {
+            setMode("flyOut");
           }
         },
         { passive: true },
@@ -1135,19 +1193,29 @@
           e.preventDefault();
           if (mode === "orbital") {
             setMode("flyIn");
-            droneAngle = ARC_S;
           } else if (mode === "drone" || mode === "flyIn") setMode("flyOut");
           else if (mode === "flyOut") setMode("flyIn");
           return;
         }
-        if (e.key === "Escape" && (mode === "drone" || mode === "flyIn"))
+        if ((e.key === "Escape") && (mode === "drone" || mode === "flyIn"))
           setMode("flyOut");
-        if (e.key === "ArrowRight" && mode === "drone")
-          droneAngle = Math.min(ARC_E - 0.15, droneAngle + 0.05);
-        if (e.key === "ArrowLeft" && mode === "drone") {
-          droneAngle -= 0.05;
-          if (droneAngle < ARC_S + 0.05) setMode("flyOut");
-        }
+        if (mode !== "drone") return;
+        if (e.code === "KeyA" || e.code === "ArrowLeft" ||
+            e.code === "KeyD" || e.code === "ArrowRight" ||
+            e.code === "KeyW" || e.code === "ArrowUp" ||
+            e.code === "KeyS" || e.code === "ArrowDown") e.preventDefault();
+        if (e.code === "KeyA" || e.code === "ArrowLeft")  flyKeys.left  = true;
+        if (e.code === "KeyD" || e.code === "ArrowRight") flyKeys.right = true;
+        if (e.code === "KeyW" || e.code === "ArrowUp")    flyKeys.up    = true;
+        if (e.code === "KeyS" || e.code === "ArrowDown")  flyKeys.down  = true;
+        if (e.code === "ShiftLeft" || e.code === "ShiftRight") flyKeys.boost = true;
+      });
+      window.addEventListener("keyup", (e) => {
+        if (e.code === "KeyA" || e.code === "ArrowLeft")  flyKeys.left  = false;
+        if (e.code === "KeyD" || e.code === "ArrowRight") flyKeys.right = false;
+        if (e.code === "KeyW" || e.code === "ArrowUp")    flyKeys.up    = false;
+        if (e.code === "KeyS" || e.code === "ArrowDown")  flyKeys.down  = false;
+        if (e.code === "ShiftLeft" || e.code === "ShiftRight") flyKeys.boost = false;
       });
 
       let dragX = null;
@@ -1156,8 +1224,7 @@
       });
       renderer.domElement.addEventListener("mousemove", (e) => {
         if (dragX === null || mode !== "drone") return;
-        droneAngle -= (e.clientX - dragX) * 0.003;
-        droneAngle = Math.max(ARC_S + 0.01, Math.min(ARC_E - 0.1, droneAngle));
+        flyYaw += (e.clientX - dragX) * 0.003;
         dragX = e.clientX;
       });
       renderer.domElement.addEventListener("mouseup", () => {
@@ -1179,11 +1246,7 @@
         "touchmove",
         (e) => {
           if (touchX === null || mode !== "drone") return;
-          droneAngle -= (e.touches[0].clientX - touchX) * 0.003;
-          droneAngle = Math.max(
-            ARC_S + 0.01,
-            Math.min(ARC_E - 0.1, droneAngle),
-          );
+          flyYaw += (e.touches[0].clientX - touchX) * 0.003;
           touchX = e.touches[0].clientX;
         },
         { passive: true },
@@ -1312,18 +1375,52 @@
         camera.fov += (getGoalFov() - camera.fov) * 0.04;
 
         if (mode === "drone") {
-          droneAngle += DRONE_ADVANCE * droneDir;
-          if (droneAngle >= ARC_E - 0.15) {
-            droneAngle = ARC_E - 0.15;
-            droneDir = -1;
-          }
-          if (droneAngle <= ARC_S) {
-            droneAngle = ARC_S;
-            droneDir = 1;
+          const TURN  = 0.035;
+          const SPEED = 0.5;
+          const ALT   = 0.4;
+          const boost = flyKeys.boost ? 2.5 : 1;
+          if (flyKeys.left)  flyYaw -= TURN;
+          if (flyKeys.right) flyYaw += TURN;
+          flyPos.x += Math.sin(flyYaw) * SPEED * boost;
+          flyPos.z += Math.cos(flyYaw) * SPEED * boost;
+          if (flyKeys.up)   flyPos.y += ALT * boost;
+          if (flyKeys.down) flyPos.y -= ALT * boost;
+
+          // Ring-solid exclusion: ring material occupies RI ≤ xzR ≤ RO AND |Y| ≤ H
+          // Push drone out via the nearest face when it would penetrate
+          {
+            const xzR = Math.sqrt(flyPos.x * flyPos.x + flyPos.z * flyPos.z);
+            if (xzR >= RI && xzR <= RO && Math.abs(flyPos.y) <= H) {
+              const dInner = xzR - RI;          // depth past inner face
+              const dOuter = RO - xzR;          // depth past outer face
+              const dTop   = H - flyPos.y;      // depth past top face
+              const dBot   = flyPos.y + H;      // depth past bottom face
+              const minR   = Math.min(dInner, dOuter);
+              const minY   = Math.min(dTop, dBot);
+              if (minR <= minY) {
+                // Radial push is shorter
+                if (dInner <= dOuter) {
+                  const s = (RI - 0.5) / xzR;
+                  flyPos.x *= s; flyPos.z *= s;
+                } else {
+                  const s = (RO + 0.5) / xzR;
+                  flyPos.x *= s; flyPos.z *= s;
+                }
+              } else {
+                // Y push is shorter
+                flyPos.y = dTop <= dBot ? H + 0.5 : -(H + 0.5);
+              }
+            }
+            // Don't approach star
+            const xzR2 = Math.sqrt(flyPos.x * flyPos.x + flyPos.z * flyPos.z);
+            if (xzR2 < 20) {
+              const s = 20 / Math.max(xzR2, 0.001);
+              flyPos.x *= s; flyPos.z *= s;
+            }
           }
         }
 
-        camUpDrone.set(-Math.cos(droneAngle), 0, -Math.sin(droneAngle));
+        { const ru = radialUp(); camUpDrone.set(ru.x, ru.y, ru.z); } // radially inward toward star
         camera.up.lerpVectors(UP_ORB, camUpDrone, tDrone).normalize();
         camera.updateProjectionMatrix();
         camera.position.copy(camPos);
@@ -1344,14 +1441,19 @@
 
         // ── Drone HUD: era name + fictional year ────────────────────────────
         if (mode === "drone" || tDrone > 0.01) {
-          const era = getEra(droneAngle);
-          const yr  = fictYear(droneAngle);
+          const flyRingAngle = Math.atan2(flyPos.z, flyPos.x);
+          const era = getEra(flyRingAngle);
+          const yr  = fictYear(flyRingAngle);
           eraHudEl.textContent  = `${ERA_LABELS[era].label}  ·  ${yr}`;
           eraHudEl.style.color  = ERA_LABELS[era].color;
           eraHudEl.style.opacity = Math.min(1, tDrone * 4);
         } else {
           eraHudEl.style.opacity = "0";
         }
+
+        // ── Ship pose — driven by free-flight position/heading ──────────────
+        gShip.position.copy(flyPos);
+        gShip.rotation.y = flyYaw;
 
         scene.children.forEach((obj) => {
           if (obj.userData.spin) {
