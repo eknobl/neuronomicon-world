@@ -541,7 +541,7 @@ export default function LandingPage() {
           <GradientPanel className="hub-newsletter p-[22px_22px_28px] flex flex-col justify-between relative">
             <div>
               <p className="hub-label">NEWSLETTER</p>
-              <a href="https://www.theaivideocreator.ai/" className="hub-big-link" target="_blank" rel="noopener noreferrer">
+              <a href="https://erikknobl.substack.com/" className="hub-big-link" target="_blank" rel="noopener noreferrer">
                 BUILDING<br />A SCIFI UNIVERSE
               </a>
             </div>
